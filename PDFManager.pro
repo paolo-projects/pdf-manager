@@ -66,3 +66,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     README.md
+
+RESOURCES += \
+    resources.qrc
+
+win32: {
+RC_ICONS = appicon.ico
+}

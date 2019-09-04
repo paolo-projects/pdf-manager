@@ -60,7 +60,7 @@ void MainWindow::on_action_Load_PDF_triggered()
         } catch (const PdfException& exception)
         {
             completeProgressBar(true);
-            QMessageBox::critical(this, "Error", "Error!\n"+QString::fromLocal8Bit(exception.what()));
+            QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
         }
     }
 }
@@ -92,7 +92,7 @@ void MainWindow::setCurrentlyDisplayedPage(int pageNum)
             completeProgressBar();
         } catch (const PdfException& exception) {
             completeProgressBar(true);
-            QMessageBox::critical(this, "Error", "Error!\n"+QString::fromLocal8Bit(exception.what()));
+            QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
         }
     }
 }
@@ -120,10 +120,11 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::startProgressBar(int maxValue, int initialValue, bool showText)
 {
-    progBar->setFormat(defaultProgBarFormat);
+    progBar->setStyleSheet(defaultProgBarFormat);
     progBar->setMaximum(maxValue);
     progBar->setValue(initialValue);
     progBar->setTextVisible(showText);
+    progBar->setVisible(true);
 }
 
 void MainWindow::incrementProgressBar(int increment)
@@ -134,7 +135,7 @@ void MainWindow::incrementProgressBar(int increment)
 void MainWindow::completeProgressBar(bool error, int delay_ms)
 {
     if(error)
-        progBar->setFormat(errorProgBarFormat);
+        progBar->setStyleSheet(errorProgBarFormat);
     progBar->setValue(progBar->maximum());
     if(timer != nullptr) {
         delete timer;
@@ -364,7 +365,7 @@ void MainWindow::on_action_Export_PDF_triggered()
                 completeProgressBar();
             } catch (const PdfException& exception) {
                 completeProgressBar(true);
-                QMessageBox::critical(this, "Error", "Error!\n"+QString::fromLocal8Bit(exception.what()));
+                QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
             }
         }
     }
@@ -373,4 +374,32 @@ void MainWindow::on_action_Export_PDF_triggered()
 void MainWindow::hideProgressBar()
 {
     progBar->setVisible(false);
+}
+
+void MainWindow::on_action_Add_all_triggered()
+{
+    if(currentlyLoadedDocument != nullptr && currentlyLoadedDocument->GetPageCount() > 0)
+    {
+        auto newItem = new PdfPageContinuousIntervalSpecificator(0, pdfPageListModel->rowCount()-1);
+        pageRanges.append(newItem);
+        if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
+        {
+            auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
+            pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+        }
+    }
+}
+
+void MainWindow::on_action_Delete_all_triggered()
+{
+    if(pageRanges.length() > 0)
+    {
+        pdfPageRangesListModel->removeRows(0, pdfPageRangesListModel->rowCount());
+        pageRanges.clear();
+    }
+}
+
+void MainWindow::on_action_Exit_triggered()
+{
+    QApplication::exit();
 }

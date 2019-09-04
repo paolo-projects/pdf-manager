@@ -17,7 +17,7 @@ PdfUtil::PdfUtil(QString path)
         const char* error = fz_caught_message(pdf_ctx);
         fz_drop_context(pdf_ctx);
         pdf_ctx = nullptr;
-        throw PdfException(std::string(std::string("Can't register document handlers. ")+std::string(error)).c_str());
+        throw PdfException("Can't register document handlers. "+QString(error));
     }
 
     fz_try(pdf_ctx)
@@ -27,7 +27,7 @@ PdfUtil::PdfUtil(QString path)
         const char* error = fz_caught_message(pdf_ctx);
         fz_drop_context(pdf_ctx);
         pdf_ctx = nullptr;
-        throw PdfException(std::string(std::string("Can't open document. ")+std::string(error)).c_str());
+        throw PdfException("Can't open document. "+QString(error));
     }
 
     fz_try(pdf_ctx)
@@ -39,7 +39,7 @@ PdfUtil::PdfUtil(QString path)
         pdf_doc = nullptr;
         fz_drop_context(pdf_ctx);
         pdf_ctx = nullptr;
-        throw PdfException(std::string(std::string("Can't count pages in document. ")+std::string(error)).c_str());
+        throw PdfException("Can't count pages in document. "+QString(error));
     }
 
     if(pageCount <= 0)
@@ -93,7 +93,7 @@ PdfRenderedPage* PdfUtil::GetPdfRenderedPage(int pageNum)
         pdf_doc = nullptr;
         fz_drop_context(pdf_ctx);
         pdf_ctx = nullptr;
-        throw PdfException(std::string(std::string("Can't render page from document. ")+std::string(error)).c_str());
+        throw PdfException("Can't render page from document. "+QString(error));
     }
 
     /*QVector<unsigned char> returnData;

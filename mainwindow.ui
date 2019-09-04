@@ -192,8 +192,18 @@
     </property>
     <addaction name="action_Load_PDF"/>
     <addaction name="action_Export_PDF"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="action_Add_all"/>
+    <addaction name="action_Delete_all"/>
    </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -202,20 +212,58 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_Load_PDF"/>
+   <addaction name="action_Export_PDF"/>
+   <addaction name="separator"/>
+   <addaction name="action_Add_all"/>
+   <addaction name="action_Delete_all"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Load_PDF">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/res/icons8_opened_folder_96px.png</normaloff>:/icons/res/icons8_opened_folder_96px.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Load PDF</string>
    </property>
   </action>
   <action name="action_Export_PDF">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/res/icons8_export_pdf_96px.png</normaloff>:/icons/res/icons8_export_pdf_96px.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Export PDF</string>
    </property>
   </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_Add_all">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/res/icons8_add_list_96px.png</normaloff>:/icons/res/icons8_add_list_96px.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add all</string>
+   </property>
+  </action>
+  <action name="action_Delete_all">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/res/icons8_delete_property_96px.png</normaloff>:/icons/res/icons8_delete_property_96px.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete all</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

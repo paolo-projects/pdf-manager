@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/icons8_add_list_96px.png</file>
+        <file>res/icons8_delete_property_96px.png</file>
+        <file>res/icons8_export_pdf_96px.png</file>
+        <file>res/icons8_opened_folder_96px.png</file>
+        <file>res/icons8_pdf_2_96px.png</file>
+    </qresource>
+</RCC>

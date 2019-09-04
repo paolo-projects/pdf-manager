@@ -17,3 +17,8 @@ LIBS += -LC:\mupdf-1.16.0-source\platform\win32\Release
 }
 ...
 ```
+
+### License
+The software is provided under GNU AGPL v3.0. See the LICENSE file for more info.
+
+Icons distibuted with the program are from [icons8](https://icons8.com). Check their website for more info.

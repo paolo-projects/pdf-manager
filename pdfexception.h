@@ -6,11 +6,24 @@
 class PdfException : public QException
 {
 public:
-    PdfException(const char* message) : msg(message) {}
-    const char* what() const override { return msg; }
+    PdfException(QString const& message) :
+        message(message)
+    {}
 
+    virtual ~PdfException()
+    {
+
+    }
+
+    void raise() const { throw *this; }
+    PdfException *clone() const { return new PdfException(*this); }
+
+    QString getMessage() const
+    {
+        return message;
+    }
 private:
-    const char* msg;
+    QString message;
 };
 
 #endif // PDFEXCEPTION_H

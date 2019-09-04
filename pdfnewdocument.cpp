@@ -88,7 +88,7 @@ void PdfUtil::PdfNewDocument::addPageFromParent(int pageNum)
     }
     fz_catch(ctx)
     {
-        fz_rethrow(ctx);
+        throw PdfException("Can't add page "+QString::number(pageNum)+" to PDF file.");
     }
 }
 
@@ -99,5 +99,5 @@ void PdfUtil::PdfNewDocument::Save()
     fz_try(ctx)
         pdf_save_document(ctx, doc_des, fileName.toLocal8Bit(), &opts);
     fz_catch(ctx)
-        throw PdfException(("Can't save to path: "+fileName).toLocal8Bit());
+        throw PdfException("Can't save to path: "+fileName);
 }

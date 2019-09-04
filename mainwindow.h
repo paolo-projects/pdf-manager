@@ -57,6 +57,12 @@ private slots:
 
     void hideProgressBar();
 
+    void on_action_Add_all_triggered();
+
+    void on_action_Delete_all_triggered();
+
+    void on_action_Exit_triggered();
+
 private:
     Ui::MainWindow *ui;
     PdfRenderedPage* displayedPage = nullptr;
