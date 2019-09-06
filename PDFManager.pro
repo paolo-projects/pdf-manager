@@ -26,6 +26,7 @@ CONFIG += c++11 static
 
 SOURCES += \
         aboutdialog.cpp \
+        customdraglistview.cpp \
         main.cpp \
         mainwindow.cpp \
         pdfmultiplepagesspecificator.cpp \
@@ -38,6 +39,7 @@ SOURCES += \
 
 HEADERS += \
         aboutdialog.h \
+        customdraglistview.h \
         mainwindow.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \

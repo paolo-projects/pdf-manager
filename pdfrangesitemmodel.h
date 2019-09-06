@@ -40,6 +40,7 @@ private:
     const QStringList supportedMimeTypes = QStringList{SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE};
     const QFlags<Qt::ItemFlag> defaultFlags = QFlags<Qt::ItemFlag>{Qt::ItemIsSelectable, Qt::ItemIsEditable, Qt::ItemIsDragEnabled, Qt::ItemIsDropEnabled, Qt::ItemIsEnabled, Qt::ItemNeverHasChildren};
     const QFlags<Qt::ItemFlag> invalidItemFlags = QFlags<Qt::ItemFlag>{Qt::ItemIsDropEnabled, Qt::ItemIsEnabled};
+    const QFlags<Qt::DropAction> supportedDragDropActions = QFlags<Qt::DropAction>{Qt::CopyAction, Qt::MoveAction};
 };
 
 #endif // PDFRANGESITEMMODEL_H

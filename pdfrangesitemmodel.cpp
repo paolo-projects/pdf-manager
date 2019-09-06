@@ -133,14 +133,14 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
             PdfPageRangeSpecificator* newItem = new PdfSinglePageSpecificator(data_items.first().toInt()-1);
             if(insertRow(rowPosition))
             {
-                auto t_index = index(rowCount()-1);
+                auto t_index = index(rowPosition);
                 setData(t_index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
             }
         }
         return true;
     } else if (data->hasFormat(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE))
     {
-        //return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
+        // It's assumed it is a Qt::MoveAction
         QList<intptr_t> list;
         QByteArray b_data = data->data(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE);
         QDataStream p_data(&b_data, QIODevice::ReadOnly);
@@ -216,13 +216,13 @@ QStringList PdfRangesItemModel::mimeTypes() const
 Qt::DropActions PdfRangesItemModel::supportedDragActions() const
 {
     qDebug() << "supportedDragActions\n";
-    return QFlags<Qt::DropAction>{Qt::CopyAction, Qt::MoveAction};
+    return supportedDragDropActions;
 }
 
 Qt::DropActions PdfRangesItemModel::supportedDropActions() const
 {
     qDebug() << "supportedDropActions\n";
-    return QFlags<Qt::DropAction>{Qt::CopyAction, Qt::MoveAction};
+    return supportedDragDropActions;
 }
 
 QList<QString> PdfRangesItemModel::decodeData(QByteArray &byteArray)
@@ -231,21 +231,6 @@ QList<QString> PdfRangesItemModel::decodeData(QByteArray &byteArray)
     QDataStream ds(&byteArray, QIODevice::ReadOnly);
     while(!ds.atEnd())
     {
-        /*int row;
-        int column;
-        int map_items;
-
-        ds >> row;
-        ds >> column;
-        ds >> map_items;
-
-        for(int i = 0; i < map_items; i++) {
-            int key;
-            ds >> key;
-            QVariant val;
-            ds >> val;
-            items << qvariant_cast<QString>(val);
-        }*/
         int row, col;
         QMap<int,  QVariant> roleDataMap;
         ds >> row >> col >> roleDataMap;
