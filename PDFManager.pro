@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +27,7 @@ CONFIG += c++11 static
 SOURCES += \
         aboutdialog.cpp \
         customdraglistview.cpp \
+        listnavigationeventfilter.cpp \
         main.cpp \
         mainwindow.cpp \
         pdfmultiplepagesspecificator.cpp \
@@ -40,6 +41,7 @@ SOURCES += \
 HEADERS += \
         aboutdialog.h \
         customdraglistview.h \
+        listnavigationeventfilter.h \
         mainwindow.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \

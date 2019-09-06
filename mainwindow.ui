@@ -34,6 +34,12 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="CustomDragListView" name="pdfPagesList">
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -50,7 +56,11 @@
             <enum>QAbstractItemView::ContiguousSelection</enum>
            </property>
           </widget>
-          <widget class="QGraphicsView" name="pdfRenderingView"/>
+          <widget class="QGraphicsView" name="pdfRenderingView">
+           <property name="renderHints">
+            <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>

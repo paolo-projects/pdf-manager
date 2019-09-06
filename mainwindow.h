@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QTimer>
+#include <QGLWidget>
 
 #include "pdfutil.h"
 #include "pdfpagerangespecificator.h"
@@ -21,6 +22,7 @@
 #include "pdfnewdocument.h"
 #include "progsettings.h"
 #include "pdfrangesitemmodel.h"
+#include "listnavigationeventfilter.h"
 
 #include "aboutdialog.h"
 
@@ -67,8 +69,7 @@ private slots:
 
     void on_action_About_triggered();
 
-    void pdfNewPagesListIndexesMoved(const QModelIndexList& indexes);
-    void pdfNewPagesModelRowsMoved(const QModelIndex &, int , int , const QModelIndex &, int );
+    void pdfPagesArrowReceived(int key);
 private:
     Ui::MainWindow *ui;
     PdfRenderedPage* displayedPage = nullptr;
@@ -82,6 +83,9 @@ private:
 
     QList<PdfPageRangeSpecificator*> pageRanges;
     PdfRangesItemModel* pdfPageRangesListModel;
+    ListNavigationEventFilter* pdfPagesEventFilter;
+
+    int currentlyDisplayedPageNum = -1;
 
     QTimer* timer = nullptr;
 

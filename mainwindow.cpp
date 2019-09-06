@@ -41,8 +41,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addPermanentWidget(progBar);
     defaultProgBarFormat = progBar->format();
 
+    pixItem.setTransformationMode(Qt::SmoothTransformation);
+    ui->pdfRenderingView->setViewport(new QGLWidget);
+
+    pdfPagesEventFilter = new ListNavigationEventFilter();
+    ui->pdfPagesList->installEventFilter(pdfPagesEventFilter);
+
+    connect(pdfPagesEventFilter, SIGNAL(navigationArrowPressed(int)), this, SLOT(pdfPagesArrowReceived(int )));
+
+    QPixmap blankPixmap(500,500);
+    blankPixmap.fill(Qt::white);
+    pixItem.setPixmap(blankPixmap);
+
+    grScene = new QGraphicsScene();
+    grScene->addItem(&pixItem);
+    ui->pdfRenderingView->setScene(grScene);
+
     connect(ui->newPagesList->model(), SIGNAL(rowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )), this, SLOT(pdfNewPagesModelRowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )));
     connect(ui->newPagesList, SIGNAL(indexesMoved(const QModelIndexList &)), this, SLOT(pdfNewPagesListIndexesMoved(const QModelIndexList &)));
+
+    //Connect line edits to buttons
+    connect(ui->singlePageTxt, SIGNAL(returnPressed()), ui->addSinglePageBtn, SIGNAL(clicked()));
+    connect(ui->pageRangeLastTxt, SIGNAL(returnPressed()), ui->addPageRangeBtn, SIGNAL(clicked()));
+    connect(ui->pageRangeFirstTxt, SIGNAL(returnPressed()), ui->addPageRangeBtn, SIGNAL(clicked()));
+    connect(ui->multiplePagesTxt, SIGNAL(returnPressed()), ui->addMultiplePagesBtn, SIGNAL(clicked()));
 }
 
 MainWindow::~MainWindow()
@@ -95,6 +117,8 @@ void MainWindow::setCurrentlyDisplayedPage(int pageNum)
 
             incrementProgressBar(33);
 
+            ui->pdfRenderingView->setScene(nullptr);
+
             grScene = new QGraphicsScene();
             pixItem.setPixmap(QPixmap::fromImage(*displayedImage));
 
@@ -103,6 +127,7 @@ void MainWindow::setCurrentlyDisplayedPage(int pageNum)
 
             ui->pdfRenderingView->fitInView(&pixItem, Qt::KeepAspectRatio);
             completeProgressBar();
+            currentlyDisplayedPageNum = pageNum;
         } catch (const PdfException& exception) {
             completeProgressBar(true);
             QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
@@ -195,12 +220,10 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
             {
                 std::sort(selection.begin(), selection.end(), std::less<QModelIndex>());
                 auto newItem = new PdfPageContinuousIntervalSpecificator(selection.first().row(), selection.last().row());
-                //pageRanges.append(newItem);
                 if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                     pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
-                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         }
@@ -214,12 +237,10 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
             {
                 // Add item to list
                 auto newItem = new PdfSinglePageSpecificator(pageNum.row());
-                //pageRanges.append(newItem);
                 if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                     pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
-                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         } else {
@@ -234,7 +255,6 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                     pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
-                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         }
@@ -257,9 +277,6 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
             {
                 std::sort(selection.begin(), selection.end(), std::less<QModelIndex>());
                 pdfPageRangesListModel->removeRows(selection.first().row(), selection.length());
-
-                for(int i = selection.length()-1; i >= 0 ; i--)
-                    pageRanges.removeAt(selection.at(i).row());
             }
         }
     } else {
@@ -272,7 +289,6 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
             {
                 // Remove item
                 pdfPageRangesListModel->removeRow(pageNum.row());
-                pageRanges.removeAt(pageNum.row());
             }
         } else {
             QMenu selectionMenu;
@@ -281,7 +297,6 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
             {
                 // Remove all
                 pdfPageRangesListModel->removeRows(0, pdfPageRangesListModel->rowCount());
-                pageRanges.clear();
             }
         }
     }
@@ -296,11 +311,10 @@ void MainWindow::on_addSinglePageBtn_clicked()
         if(ok && pageValue >= 1 && pageValue <= currentlyLoadedDocument->GetPageCount())
         {
             auto newItem = new PdfSinglePageSpecificator(pageValue-1);
-            pageRanges.append(newItem);
             if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
             }
         }
     }
@@ -319,11 +333,10 @@ void MainWindow::on_addPageRangeBtn_clicked()
                 std::swap(firstPageValue, lastPageValue);
 
             auto newItem = new PdfPageContinuousIntervalSpecificator(firstPageValue-1, lastPageValue-1);
-            pageRanges.append(newItem);
             if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
             }
         }
     }
@@ -342,11 +355,10 @@ void MainWindow::on_addMultiplePagesBtn_clicked()
                 if(page < 0 || page >= pagesCount)
                     return;
             }
-            pageRanges.append(newItem);
             if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
             }
         }
     }
@@ -399,11 +411,10 @@ void MainWindow::on_action_Add_all_triggered()
     if(currentlyLoadedDocument != nullptr && currentlyLoadedDocument->GetPageCount() > 0)
     {
         auto newItem = new PdfPageContinuousIntervalSpecificator(0, pdfPageListModel->rowCount()-1);
-        pageRanges.append(newItem);
         if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
         {
             auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-            pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+            pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
         }
     }
 }
@@ -413,7 +424,6 @@ void MainWindow::on_action_Delete_all_triggered()
     if(pageRanges.length() > 0)
     {
         pdfPageRangesListModel->removeRows(0, pdfPageRangesListModel->rowCount());
-        pageRanges.clear();
     }
 }
 
@@ -428,12 +438,21 @@ void MainWindow::on_action_About_triggered()
     aboutDialog.exec();
 }
 
-void MainWindow::pdfNewPagesListIndexesMoved(const QModelIndexList &indexes)
+void MainWindow::pdfPagesArrowReceived(int key)
 {
-    pageRanges.move(indexes.first().row(), indexes.last().row());
-}
-
-void MainWindow::pdfNewPagesModelRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row)
-{
-    pageRanges.move(start, end);
+    switch(key)
+    {
+    case Qt::Key_Down:
+        if(currentlyDisplayedPageNum+1 >= 0 && currentlyDisplayedPageNum+1 < currentlyLoadedDocument->GetPageCount())
+        {
+            setCurrentlyDisplayedPage(currentlyDisplayedPageNum+1);
+        }
+        break;
+    case Qt::Key_Up:
+        if(currentlyDisplayedPageNum-1 >= 0 && currentlyDisplayedPageNum-1 < currentlyLoadedDocument->GetPageCount())
+        {
+            setCurrentlyDisplayedPage(currentlyDisplayedPageNum-1);
+        }
+        break;
+    }
 }

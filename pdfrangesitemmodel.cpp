@@ -114,7 +114,7 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
 {
     qDebug() << "dropMimeData\n";
     int rowPosition = parent.isValid() ? row+1 : row;
-    rowPosition = rowPosition == -1 ? rowCount() : rowPosition;
+    rowPosition = (rowPosition == -1) ? rowCount() : rowPosition;
     if(data->hasFormat("application/x-qabstractitemmodeldatalist"))
     {
         QByteArray bytearray = data->data("application/x-qabstractitemmodeldatalist");
