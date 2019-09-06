@@ -122,6 +122,7 @@ void MainWindow::updatePdfPageList()
 
         pdfPageListModel->setStringList(pdfPages);
         ui->pdfPagesList->setCurrentlyLoadedDocument(currentlyLoadedDocument);
+        ui->newPagesList->setCurrentlyLoadedDocument(currentlyLoadedDocument);
     }
 }
 

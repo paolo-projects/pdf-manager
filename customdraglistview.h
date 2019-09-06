@@ -7,6 +7,7 @@
 
 #include "pdfutil.h"
 #include "pdfrenderedpage.h"
+#include "pdfpagerangespecificator.h"
 
 class CustomDragListView : public QListView
 {

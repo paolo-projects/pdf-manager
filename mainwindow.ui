@@ -188,7 +188,7 @@
             </item>
            </layout>
           </widget>
-          <widget class="QListView" name="newPagesList">
+          <widget class="CustomDragListView" name="newPagesList">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>

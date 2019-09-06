@@ -27,7 +27,19 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
             if(currentlyLoadedDocument != nullptr)
             {
                 QRect rect;
-                PdfRenderedPage* pdfPage = currentlyLoadedDocument->GetPdfRenderedPage(model()->data(indexes.first(), Qt::DisplayRole).toInt() - 1);
+                QVariant m_data = model()->data(indexes.first(), Qt::EditRole);
+                int pageNum = 0;
+                if(strcmp(m_data.typeName(), "PdfPageRangeSpecificator*") == 0)
+                {
+                    PdfPageRangeSpecificator* intervalData = qvariant_cast<PdfPageRangeSpecificator*>(m_data);
+                    if(intervalData->getAllPages().length()>1)
+                    {
+                        QAbstractItemView::startDrag(supportedActions);
+                        return;
+                    } else pageNum = intervalData->getAllPages().first();
+                } else pageNum = qvariant_cast<QString>(m_data).toInt() - 1;
+
+                PdfRenderedPage* pdfPage = currentlyLoadedDocument->GetPdfRenderedPage(pageNum);
                 QImage* image = pdfPage->getImage();
                 QPixmap pixmap = QPixmap::fromImage(*image).scaled(210, 297, Qt::KeepAspectRatio);
 
@@ -56,10 +68,9 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
                 else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
                     defAction = Qt::CopyAction;
                 drag->exec(supportedActions, defAction);
-                    //d->clearOrRemove();
-                // Reset the drop indicator
-                //d->dropIndicatorRect = QRect();
-                //d->dropIndicatorPosition = OnItem;
+
+                delete image;
+                delete pdfPage;
             } else QAbstractItemView::startDrag(supportedActions);
         }
     }
