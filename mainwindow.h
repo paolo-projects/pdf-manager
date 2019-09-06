@@ -20,7 +20,9 @@
 #include "pdfexception.h"
 #include "pdfnewdocument.h"
 #include "progsettings.h"
-//#include "pdfrenderedpage.h"
+#include "pdfrangesitemmodel.h"
+
+#include "aboutdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -63,6 +65,10 @@ private slots:
 
     void on_action_Exit_triggered();
 
+    void on_action_About_triggered();
+
+    void pdfNewPagesListIndexesMoved(const QModelIndexList& indexes);
+    void pdfNewPagesModelRowsMoved(const QModelIndex &, int , int , const QModelIndex &, int );
 private:
     Ui::MainWindow *ui;
     PdfRenderedPage* displayedPage = nullptr;
@@ -75,7 +81,7 @@ private:
     QStringListModel* pdfPageListModel;
 
     QList<PdfPageRangeSpecificator*> pageRanges;
-    QStringListModel* pdfPageRangesListModel;
+    PdfRangesItemModel* pdfPageRangesListModel;
 
     QTimer* timer = nullptr;
 

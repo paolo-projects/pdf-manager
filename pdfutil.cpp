@@ -4,8 +4,6 @@ PdfUtil::PdfUtil(QString path)
     :
       docPath(path)
 {
-    /*pdfDoc = new PoDoFo::PdfMemDocument(path.toLocal8Bit().data());
-    pageCount = pdfDoc->GetPageCount();*/
     pdf_ctx = fz_new_context(nullptr, nullptr, FZ_STORE_UNLIMITED);
     if(!pdf_ctx)
         throw PdfException("Failed to create context.");
@@ -73,11 +71,6 @@ int PdfUtil::GetPageCount() const
 {
     return pageCount;
 }
-
-/*PoDoFo::PdfMemDocument *PdfUtil::getPdfDocument()
-{
-    return pdfDoc;
-}*/
 
 PdfRenderedPage* PdfUtil::GetPdfRenderedPage(int pageNum)
 {

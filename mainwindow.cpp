@@ -10,8 +10,18 @@ MainWindow::MainWindow(QWidget *parent) :
     pdfPageListModel = new QStringListModel(this);
     ui->pdfPagesList->setModel(pdfPageListModel);
 
-    pdfPageRangesListModel = new QStringListModel(this);
+    pdfPageRangesListModel = new PdfRangesItemModel(pageRanges, this);
     ui->newPagesList->setModel(pdfPageRangesListModel);
+
+    ui->pdfPagesList->setDragEnabled(true);
+    ui->pdfPagesList->setDragDropMode(QAbstractItemView::DragOnly);
+
+    ui->newPagesList->setDragEnabled(true);
+    ui->newPagesList->setDragDropMode(QAbstractItemView::DragDrop);
+    ui->newPagesList->setDropIndicatorShown(true);
+    ui->newPagesList->setDefaultDropAction(Qt::CopyAction);
+    ui->newPagesList->setDragDropOverwriteMode(false);
+    ui->newPagesList->setAcceptDrops(true);
 
     // Set int validators
     ui->singlePageTxt->setValidator( new QIntValidator );
@@ -30,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     progBar->setVisible(false);
     ui->statusBar->addPermanentWidget(progBar);
     defaultProgBarFormat = progBar->format();
+
+    connect(ui->newPagesList->model(), SIGNAL(rowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )), this, SLOT(pdfNewPagesModelRowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )));
+    connect(ui->newPagesList, SIGNAL(indexesMoved(const QModelIndexList &)), this, SLOT(pdfNewPagesListIndexesMoved(const QModelIndexList &)));
 }
 
 MainWindow::~MainWindow()
@@ -180,11 +193,12 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
             {
                 std::sort(selection.begin(), selection.end(), std::less<QModelIndex>());
                 auto newItem = new PdfPageContinuousIntervalSpecificator(selection.first().row(), selection.last().row());
-                pageRanges.append(newItem);
+                //pageRanges.append(newItem);
                 if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                    pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                    pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         }
@@ -198,11 +212,12 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
             {
                 // Add item to list
                 auto newItem = new PdfSinglePageSpecificator(pageNum.row());
-                pageRanges.append(newItem);
+                //pageRanges.append(newItem);
                 if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                    pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                    pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         } else {
@@ -216,7 +231,8 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                 if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
-                    pdfPageRangesListModel->setData(index, newItem->getDisplayText());
+                    pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                    //pdfPageRangesListModel->setData(index, newItem->getDisplayText());
                 }
             }
         }
@@ -402,4 +418,20 @@ void MainWindow::on_action_Delete_all_triggered()
 void MainWindow::on_action_Exit_triggered()
 {
     QApplication::exit();
+}
+
+void MainWindow::on_action_About_triggered()
+{
+    AboutDialog aboutDialog(this);
+    aboutDialog.exec();
+}
+
+void MainWindow::pdfNewPagesListIndexesMoved(const QModelIndexList &indexes)
+{
+    pageRanges.move(indexes.first().row(), indexes.last().row());
+}
+
+void MainWindow::pdfNewPagesModelRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row)
+{
+    pageRanges.move(start, end);
 }

@@ -17,8 +17,8 @@ public:
 
     ~PdfMultiplePagesSpecificator() override;
 
-    QList<int> getAllPages() override;
-    QString getDisplayText() override;
+    QList<int> getAllPages() const override;
+    QString getDisplayText() const override;
 
 private:
     QList<int> pages;

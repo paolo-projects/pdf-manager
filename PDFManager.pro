@@ -25,28 +25,33 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11 static
 
 SOURCES += \
+        aboutdialog.cpp \
         main.cpp \
         mainwindow.cpp \
         pdfmultiplepagesspecificator.cpp \
         pdfnewdocument.cpp \
         pdfpagecontinuousintervalspecificator.cpp \
+        pdfrangesitemmodel.cpp \
         pdfrenderedpage.cpp \
         pdfsinglepagespecificator.cpp \
         pdfutil.cpp
 
 HEADERS += \
+        aboutdialog.h \
         mainwindow.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \
         pdfnewdocument.h \
         pdfpagecontinuousintervalspecificator.h \
         pdfpagerangespecificator.h \
+        pdfrangesitemmodel.h \
         pdfrenderedpage.h \
         pdfsinglepagespecificator.h \
         pdfutil.h \
         progsettings.h
 
 FORMS += \
+        aboutdialog.ui \
         mainwindow.ui
 
 win32: {

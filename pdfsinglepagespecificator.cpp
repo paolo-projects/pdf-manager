@@ -16,12 +16,12 @@ PdfSinglePageSpecificator::~PdfSinglePageSpecificator()
 
 }
 
-QList<int> PdfSinglePageSpecificator::getAllPages()
+QList<int> PdfSinglePageSpecificator::getAllPages() const
 {
     return QList<int>({page});
 }
 
-QString PdfSinglePageSpecificator::getDisplayText()
+QString PdfSinglePageSpecificator::getDisplayText() const
 {
     return QString::number(page+1);
 }

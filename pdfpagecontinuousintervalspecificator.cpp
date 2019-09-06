@@ -36,7 +36,7 @@ PdfPageContinuousIntervalSpecificator::~PdfPageContinuousIntervalSpecificator()
 
 }
 
-QList<int> PdfPageContinuousIntervalSpecificator::getAllPages()
+QList<int> PdfPageContinuousIntervalSpecificator::getAllPages() const
 {
     QList<int> pagesList;
     for (int i = lowerPage; i <= higherPage; i++)
@@ -44,7 +44,7 @@ QList<int> PdfPageContinuousIntervalSpecificator::getAllPages()
     return pagesList;
 }
 
-QString PdfPageContinuousIntervalSpecificator::getDisplayText()
+QString PdfPageContinuousIntervalSpecificator::getDisplayText() const
 {
     return QString("%1 - %2").arg(QString::number(lowerPage+1), QString::number(higherPage+1));
 }

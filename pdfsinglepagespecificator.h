@@ -13,8 +13,8 @@ public:
     PdfSinglePageSpecificator(int pageNum);
     ~PdfSinglePageSpecificator() override;
 
-    QList<int> getAllPages() override;
-    QString getDisplayText() override;
+    QList<int> getAllPages() const override;
+    QString getDisplayText() const override;
 
 private:
     int page;

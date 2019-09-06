@@ -27,12 +27,12 @@ PdfMultiplePagesSpecificator::~PdfMultiplePagesSpecificator()
 
 }
 
-QList<int> PdfMultiplePagesSpecificator::getAllPages()
+QList<int> PdfMultiplePagesSpecificator::getAllPages() const
 {
     return pages;
 }
 
-QString PdfMultiplePagesSpecificator::getDisplayText()
+QString PdfMultiplePagesSpecificator::getDisplayText() const
 {
     QString text = "";
 
