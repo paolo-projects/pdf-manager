@@ -33,6 +33,7 @@ SOURCES += \
         pdfmultiplepagesspecificator.cpp \
         pdfnewdocument.cpp \
         pdfpagecontinuousintervalspecificator.cpp \
+        pdfpixmappainter.cpp \
         pdfrangesitemmodel.cpp \
         pdfrenderedpage.cpp \
         pdfsinglepagespecificator.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
         pdfnewdocument.h \
         pdfpagecontinuousintervalspecificator.h \
         pdfpagerangespecificator.h \
+        pdfpixmappainter.h \
         pdfrangesitemmodel.h \
         pdfrenderedpage.h \
         pdfsinglepagespecificator.h \

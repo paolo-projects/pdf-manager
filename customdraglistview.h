@@ -3,10 +3,8 @@
 
 #include <QListView>
 #include <QDrag>
-#include <QPainter>
 
-#include "pdfutil.h"
-#include "pdfrenderedpage.h"
+#include "pdfpixmappainter.h"
 #include "pdfpagerangespecificator.h"
 
 class CustomDragListView : public QListView
