@@ -2,6 +2,9 @@
 
 An open source cross-platform Qt application to extract pages from a PDF file and save them to another one.
 
+### Releases
+You can find Win32 installers in the *Release* section.
+
 ### Compile
 To compile the software you need Qt (qmake or qtcreator).
 
