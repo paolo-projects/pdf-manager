@@ -3,12 +3,12 @@
 An open source cross-platform Qt application to extract pages from a PDF file and save them to another one.
 
 ### Releases
-You can find Win32 installers in the *Release* section.
+You can find Win32 installers in the *releases* section.
 
 ### Compile
 To compile the software you need Qt (qmake or qtcreator).
 
-You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux you can probably find a compiled version in your package manager while on windows you have to compile it yourself, and then edit the .pro file accordingly to point to your lib and headers locations.
+You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux you will probably find a compiled version in your package manager (make sure it's the same version *1.16.0* or higher) while on windows you have to compile it yourself, and then edit the .pro file accordingly to point to your lib and headers locations.
 ```
 ...
 win32: {
