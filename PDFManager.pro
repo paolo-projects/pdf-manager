@@ -54,7 +54,8 @@ HEADERS += \
         pdfrenderedpage.h \
         pdfsinglepagespecificator.h \
         pdfutil.h \
-        progsettings.h
+        progsettings.h \
+        version.h
 
 FORMS += \
         aboutdialog.ui \
@@ -76,11 +77,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    README.md
+    README.md \
+    resources.rc
 
 RESOURCES += \
     resources.qrc
 
 win32: {
-RC_ICONS = appicon.ico
+RC_FILE = resources.rc
 }

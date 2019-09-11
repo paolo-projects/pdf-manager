@@ -6,6 +6,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+    ui->label->setText(ui->label->text().replace("{{applicationVersion}}", VER_PRODUCTVERSION_STR, Qt::CaseSensitive));
     layout()->setSizeConstraint( QLayout::SetFixedSize );
 }
 
