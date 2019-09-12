@@ -91,7 +91,9 @@ bool PdfRangesItemModel::removeRows(int position, int rows, const QModelIndex &p
     beginRemoveRows(QModelIndex(), position, position+rows-1);
 
     for (int row = 0; row < rows; ++row) {
+        auto p = items.at(position);
         items.removeAt(position);
+        delete p;
     }
 
     endRemoveRows();

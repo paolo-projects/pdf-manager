@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11 static
+CONFIG += c++11 dynamic # change this to static if you built mupdf library statically (default behavior of the mupdf provided MSVC project)
 
 SOURCES += \
         aboutdialog.cpp \
@@ -62,11 +62,22 @@ FORMS += \
         mainwindow.ui
 
 win32: {
-INCLUDEPATH += C:\mupdf-1.16.0-source\include
-}
+MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
 
-win32: {
-LIBS += -LC:\mupdf-1.16.0-source\platform\win32\Release
+INCLUDEPATH += $$MUPDFPATH\include
+
+!contains(QMAKE_TARGET.arch, x86_64) {
+        message("x86 build")
+
+        ## Windows x86 (32bit) specific build here
+        LIBS += -L$$MUPDFPATH\platform\win32\Release # Edit this path to point to your win32 build directory
+
+    } else {
+        message("x86_64 build")
+
+        ## Windows x64 (64bit) specific build here
+        LIBS += -L$$MUPDFPATH\platform\win32\x64\Release # Edit this path to point to your win64 build directory
+    }
 }
 
 LIBS += -llibmupdf

@@ -69,6 +69,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    qDeleteAll(pageRanges);
+
+    if(displayedImage != nullptr)
+        delete displayedImage;
+
+    if(displayedPage != nullptr)
+        delete displayedPage;
+
+    if(currentlyLoadedDocument != nullptr)
+        delete currentlyLoadedDocument;
+
     delete ui;
 }
 
@@ -92,6 +103,7 @@ void MainWindow::on_action_Load_PDF_triggered()
             completeProgressBar();
 
             updatePdfPageList();
+            pdfPageRangesListModel->removeRows(0, pdfPageListModel->rowCount());
         } catch (const PdfException& exception)
         {
             completeProgressBar(true);
