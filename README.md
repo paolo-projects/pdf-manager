@@ -12,11 +12,22 @@ You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/inde
 ```
 ...
 win32: {
-INCLUDEPATH += C:\mupdf-1.16.0-source\include
-}
+MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
 
-win32: {
-LIBS += -LC:\mupdf-1.16.0-source\platform\win32\Release
+INCLUDEPATH += $$MUPDFPATH\include
+
+!contains(QMAKE_TARGET.arch, x86_64) {
+        message("x86 build")
+
+        ## Windows x86 (32bit) specific build here
+        LIBS += -L$$MUPDFPATH\platform\win32\Release # Edit this path to point to your win32 build directory
+
+    } else {
+        message("x86_64 build")
+
+        ## Windows x64 (64bit) specific build here
+        LIBS += -L$$MUPDFPATH\platform\win32\x64\Release # Edit this path to point to your win64 build directory
+    }
 }
 ...
 ```
