@@ -51,6 +51,8 @@ PdfUtil::PdfUtil(QString path)
 
     pdf_matrix = fz_scale(zoom / 100.0f, zoom / 100.0f);
     pdf_matrix = fz_pre_rotate(pdf_matrix, rotation);
+
+    docName = QFileInfo(docPath).fileName();
 }
 
 PdfUtil::~PdfUtil()
@@ -111,4 +113,14 @@ PdfRenderedPage* PdfUtil::GetPdfRenderedPage(int pageNum)
     fz_drop_pixmap(pdf_ctx, pdf_pixmap);
 
     return pdfPage;
+}
+
+QString PdfUtil::GetDocName() const
+{
+    return docName;
+}
+
+QString PdfUtil::GetDocPath() const
+{
+    return docPath;
 }

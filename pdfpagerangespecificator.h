@@ -3,6 +3,8 @@
 
 #include <QList>
 
+#include "pdfutil.h"
+
 class PdfPageRangeSpecificator
 {
 public:
@@ -11,6 +13,8 @@ public:
     virtual QString getDisplayText() const = 0;
     operator QString() const { return getDisplayText(); }
     operator QList<int>() const { return getAllPages(); }
+    virtual QString getDocumentPath() const = 0;
+    virtual PdfUtil* getDocument() const = 0;
 };
 
 Q_DECLARE_METATYPE(PdfPageRangeSpecificator*)

@@ -12,6 +12,8 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QGLWidget>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include "pdfutil.h"
 #include "pdfpagerangespecificator.h"
@@ -23,6 +25,8 @@
 #include "progsettings.h"
 #include "pdfrangesitemmodel.h"
 #include "listnavigationeventfilter.h"
+#include "openeddocumentstreemodel.h"
+#include "htmldelegate.h"
 
 #include "aboutdialog.h"
 
@@ -75,17 +79,15 @@ private:
     PdfRenderedPage* displayedPage = nullptr;
     QImage* displayedImage = nullptr;
     QGraphicsScene* grScene = nullptr;
-    PdfUtil* currentlyLoadedDocument = nullptr;
+    QList<PdfUtil*> loadedDocuments;
     QGraphicsPixmapItem pixItem;
     QProgressBar* progBar;
 
-    QStringListModel* pdfPageListModel;
+    //QStringListModel* pdfPageListModel;
+    OpenedDocumentsTreeModel* pdfPageListModel;
 
     QList<PdfPageRangeSpecificator*> pageRanges;
     PdfRangesItemModel* pdfPageRangesListModel;
-    ListNavigationEventFilter* pdfPagesEventFilter;
-
-    int currentlyDisplayedPageNum = -1;
 
     QTimer* timer = nullptr;
 
@@ -98,13 +100,16 @@ private:
                                   "background-color: #FF0000;"
                                   "}";
 
-    void setCurrentlyDisplayedPage(int pageNum);
+    void setCurrentlyDisplayedPage(int pageNum, int docIndex);
     void updatePdfPageList();
+    void addPdfPageList(PdfUtil* doc);
     void resizeEvent(QResizeEvent* event) override;
 
     void startProgressBar(int maxValue, int initialValue = 0, bool showText = SETTINGS::DEFAULT_PROGBAR_DISPLAY_TEXT);
     void incrementProgressBar(int increment = 1);
     void completeProgressBar(bool error = false, int delay_ms = SETTINGS::DEFAULT_PROGBAR_DELAY_BEFORE_HIDE);
+
+    PdfUtil* getCurrentlySelectedDocument();
 
 };
 

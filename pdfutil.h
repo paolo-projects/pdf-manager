@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QString>
 #include <QException>
+#include <QFileInfo>
 #include <mupdf/fitz.h>
 
 #include "pdfrenderedpage.h"
@@ -17,9 +18,11 @@ public:
     ~PdfUtil();
     int GetPageCount() const;
     PdfRenderedPage*  GetPdfRenderedPage(int pageNum);
+    QString GetDocName() const;
+    QString GetDocPath() const;
     class PdfNewDocument;
 private:
-    QString docPath;
+    QString docPath, docName;
     fz_context* pdf_ctx = nullptr;
     int pageCount = 0;
     fz_document* pdf_doc = nullptr;

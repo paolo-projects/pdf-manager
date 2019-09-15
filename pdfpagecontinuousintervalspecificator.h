@@ -11,16 +11,22 @@
 class PdfPageContinuousIntervalSpecificator : public PdfPageRangeSpecificator
 {
 public:
-    PdfPageContinuousIntervalSpecificator(int firstPage, int lastPage);
-    PdfPageContinuousIntervalSpecificator(QString descriptor);
+    PdfPageContinuousIntervalSpecificator(QString documentPath, int firstPage, int lastPage, PdfUtil* doc);
+    PdfPageContinuousIntervalSpecificator(QString documentPath, QString descriptor, PdfUtil* doc);
     ~PdfPageContinuousIntervalSpecificator() override;
 
     QList<int> getAllPages() const override;
     QString getDisplayText() const override;
 
+    QString getDocumentPath() const override;
+    PdfUtil* getDocument() const override;
+
 private:
     int lowerPage, higherPage;
     QRegularExpression regxp = QRegularExpression("^(\\d+)\\-(\\d+)$");
+
+    QString docPath;
+    PdfUtil* doc;
 };
 
 #endif // PDFPAGECONTINUOUSINTERVALSPECIFICATOR_H

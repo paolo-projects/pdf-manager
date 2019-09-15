@@ -1,11 +1,13 @@
 #include "pdfnewdocument.h"
 
-PdfUtil::PdfNewDocument::PdfNewDocument(PdfUtil* parent, QString fileName)
+PdfUtil::PdfNewDocument::PdfNewDocument(QString fileName)
     :
-      fileName(fileName),
-      pdfUtil(parent),
-      ctx(pdfUtil->pdf_ctx)
+      fileName(fileName)
 {
+    ctx = fz_new_context(nullptr, nullptr, FZ_STORE_UNLIMITED);
+    if(!ctx)
+        throw PdfException("Failed to create context.");
+
     pdf_parse_write_options(ctx, &opts, flags.toLocal8Bit());
 
     fz_try(ctx)
@@ -18,23 +20,30 @@ PdfUtil::PdfNewDocument::PdfNewDocument(PdfUtil* parent, QString fileName)
         fz_drop_context(ctx);
         throw PdfException("Cannot create PDF document.");
     }
-
-    doc_src = pdf_open_document(ctx, parent->docPath.toLocal8Bit());
-
-    graft_map = pdf_new_graft_map(ctx, doc_des);
 }
 
 PdfUtil::PdfNewDocument::~PdfNewDocument()
 {
-    pdf_drop_document(ctx, doc_src);
     pdf_drop_document(ctx, doc_des);
+    fz_drop_context(ctx);
 }
 
-void PdfUtil::PdfNewDocument::addPageFromParent(int pageNum)
+void PdfUtil::PdfNewDocument::addPagesFromRange(PdfPageRangeSpecificator* range)
 {
-    if(pageNum < 0 || pageNum >= pdfUtil->pageCount)
-        throw PdfException("Page number out of bounds.");
+    pdf_document* doc_src = pdf_open_document(ctx, range->getDocumentPath().toLocal8Bit());
 
+    for(int page : range->getAllPages())
+    {
+        graft_map = pdf_new_graft_map(ctx, doc_des);
+        addPageFromParent(doc_src, page);
+        pdf_drop_graft_map(ctx, graft_map);
+    }
+
+    pdf_drop_document(ctx, doc_src);
+}
+
+void PdfUtil::PdfNewDocument::addPageFromParent(pdf_document* doc_src, int pageNum)
+{
     pdf_obj *page_ref;
     pdf_obj *page_dict = NULL;
     pdf_obj *obj;
@@ -94,8 +103,6 @@ void PdfUtil::PdfNewDocument::addPageFromParent(int pageNum)
 
 void PdfUtil::PdfNewDocument::Save()
 {
-    pdf_drop_graft_map(ctx, graft_map);
-
     fz_try(ctx)
         pdf_save_document(ctx, doc_des, fileName.toLocal8Bit(), &opts);
     fz_catch(ctx)

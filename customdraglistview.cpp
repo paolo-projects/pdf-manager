@@ -7,9 +7,9 @@ CustomDragListView::CustomDragListView(QWidget* parent)
 
 }
 
-void CustomDragListView::setCurrentlyLoadedDocument(PdfUtil *document)
+void CustomDragListView::setCurrentlyLoadedDocuments(QList<PdfUtil*> document)
 {
-    currentlyLoadedDocument = document;
+    currentlyLoadedDocuments = &document;
 }
 
 void CustomDragListView::startDrag(Qt::DropActions supportedActions)
@@ -20,48 +20,50 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
         if (!data)
             return;
 
-        if(indexes.length()>1)
+        PdfUtil* doc = qvariant_cast<PdfPageRangeSpecificator*>(model()->data(indexes.last(), Qt::EditRole))->getDocument();
+
+        if(doc != nullptr)
         {
-            //QAbstractItemView::startDrag(supportedActions);
-            QRect rect;
-            int pageNumF = 0, pageNumL = 0;
-
-            QVariant m_data = model()->data(indexes.last(), Qt::EditRole);
-
-            if(strcmp(m_data.typeName(), "PdfPageRangeSpecificator*") == 0)
+            if(indexes.length()>1)
             {
-                PdfPageRangeSpecificator* intervalData = qvariant_cast<PdfPageRangeSpecificator*>(m_data);
-                pageNumL = intervalData->getAllPages().last();
+                //QAbstractItemView::startDrag(supportedActions);
+                QRect rect;
+                int pageNumF = 0, pageNumL = 0;
+
+                QVariant m_data = model()->data(indexes.last(), Qt::EditRole);
+
+                if(strcmp(m_data.typeName(), "PdfPageRangeSpecificator*") == 0)
+                {
+                    PdfPageRangeSpecificator* intervalData = qvariant_cast<PdfPageRangeSpecificator*>(m_data);
+                    pageNumL = intervalData->getAllPages().last();
+                } else {
+                    pageNumL = qvariant_cast<QString>(m_data).toInt() - 1;
+                }
+
+                m_data = model()->data(indexes.first(), Qt::EditRole);
+
+                if(strcmp(m_data.typeName(), "PdfPageRangeSpecificator*") == 0)
+                {
+                    PdfPageRangeSpecificator* intervalData = qvariant_cast<PdfPageRangeSpecificator*>(m_data);
+                    pageNumF = intervalData->getAllPages().first();
+                } else {
+                    pageNumF = qvariant_cast<QString>(m_data).toInt() - 1;
+                }
+
+                QPixmap page = PDFPixmapPainter::getPageRangePixmap(doc, pageNumF, pageNumL);
+
+                rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
+                QDrag *drag = new QDrag(this);
+                drag->setPixmap(page);
+                drag->setMimeData(data);
+                drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
+                Qt::DropAction defAction = Qt::IgnoreAction;
+                if (defaultDropAction() != Qt::IgnoreAction && (supportedActions & defaultDropAction()))
+                    defAction = defaultDropAction();
+                else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+                    defAction = Qt::CopyAction;
+                drag->exec(supportedActions, defAction);
             } else {
-                pageNumL = qvariant_cast<QString>(m_data).toInt() - 1;
-            }
-
-            m_data = model()->data(indexes.first(), Qt::EditRole);
-
-            if(strcmp(m_data.typeName(), "PdfPageRangeSpecificator*") == 0)
-            {
-                PdfPageRangeSpecificator* intervalData = qvariant_cast<PdfPageRangeSpecificator*>(m_data);
-                pageNumF = intervalData->getAllPages().first();
-            } else {
-                pageNumF = qvariant_cast<QString>(m_data).toInt() - 1;
-            }
-
-            QPixmap page = PDFPixmapPainter::getPageRangePixmap(currentlyLoadedDocument, pageNumF, pageNumL);
-
-            rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
-            QDrag *drag = new QDrag(this);
-            drag->setPixmap(page);
-            drag->setMimeData(data);
-            drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
-            Qt::DropAction defAction = Qt::IgnoreAction;
-            if (defaultDropAction() != Qt::IgnoreAction && (supportedActions & defaultDropAction()))
-                defAction = defaultDropAction();
-            else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
-                defAction = Qt::CopyAction;
-            drag->exec(supportedActions, defAction);
-        } else {
-            if(currentlyLoadedDocument != nullptr)
-            {
                 QRect rect;
                 QVariant m_data = model()->data(indexes.first(), Qt::EditRole);
                 int pageNum = 0;
@@ -75,7 +77,7 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
                         pageNumF = intervalData->getAllPages().first();
                         pageNumL = intervalData->getAllPages().last();
 
-                        QPixmap page = PDFPixmapPainter::getPageRangePixmap(currentlyLoadedDocument, pageNumF, pageNumL);
+                        QPixmap page = PDFPixmapPainter::getPageRangePixmap(doc, pageNumF, pageNumL);
 
                         rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
                         QDrag *drag = new QDrag(this);
@@ -112,7 +114,7 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
                 painter.drawLine(0, bottom, 0, 0); // Left border
                 painter.end();*/
 
-                QPixmap page = PDFPixmapPainter::getSingleDocumentPixmap(currentlyLoadedDocument, pageNum);
+                QPixmap page = PDFPixmapPainter::getSingleDocumentPixmap(doc, pageNum);
 
                 rect.adjust(horizontalOffset(), verticalOffset(), 0, 0);
                 QDrag *drag = new QDrag(this);
@@ -128,7 +130,7 @@ void CustomDragListView::startDrag(Qt::DropActions supportedActions)
 
                 /*delete image;
                 delete pdfPage;*/
-            } else QAbstractItemView::startDrag(supportedActions);
-        }
+            }
+        } else QAbstractItemView::startDrag(supportedActions);
     }
 }

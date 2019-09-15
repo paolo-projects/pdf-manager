@@ -33,10 +33,10 @@
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <widget class="CustomDragListView" name="pdfPagesList">
+          <widget class="CustomDragTreeView" name="pdfPagesList">
            <property name="maximumSize">
             <size>
-             <width>200</width>
+             <width>350</width>
              <height>16777215</height>
             </size>
            </property>
@@ -331,6 +331,11 @@
    <class>CustomDragListView</class>
    <extends>QListView</extends>
    <header>customdraglistview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustomDragTreeView</class>
+   <extends>QTreeView</extends>
+   <header>customdragtreeview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -27,9 +27,12 @@ CONFIG += c++11 dynamic # change this to static if you built mupdf library stati
 SOURCES += \
         aboutdialog.cpp \
         customdraglistview.cpp \
+        customdragtreeview.cpp \
+        htmldelegate.cpp \
         listnavigationeventfilter.cpp \
         main.cpp \
         mainwindow.cpp \
+        openeddocumentstreemodel.cpp \
         pdfmultiplepagesspecificator.cpp \
         pdfnewdocument.cpp \
         pdfpagecontinuousintervalspecificator.cpp \
@@ -37,13 +40,17 @@ SOURCES += \
         pdfrangesitemmodel.cpp \
         pdfrenderedpage.cpp \
         pdfsinglepagespecificator.cpp \
-        pdfutil.cpp
+        pdfutil.cpp \
+        treeitem.cpp
 
 HEADERS += \
         aboutdialog.h \
         customdraglistview.h \
+        customdragtreeview.h \
+        htmldelegate.h \
         listnavigationeventfilter.h \
         mainwindow.h \
+        openeddocumentstreemodel.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \
         pdfnewdocument.h \
@@ -55,6 +62,7 @@ HEADERS += \
         pdfsinglepagespecificator.h \
         pdfutil.h \
         progsettings.h \
+        treeitem.h \
         version.h
 
 FORMS += \

@@ -1,6 +1,7 @@
 #include "pdfpagecontinuousintervalspecificator.h"
 
-PdfPageContinuousIntervalSpecificator::PdfPageContinuousIntervalSpecificator(int firstPage, int lastPage)
+PdfPageContinuousIntervalSpecificator::PdfPageContinuousIntervalSpecificator(QString documentPath, int firstPage, int lastPage, PdfUtil* doc)
+    :   docPath(documentPath), doc(doc)
 {
     if(firstPage < lastPage)
     {
@@ -12,7 +13,8 @@ PdfPageContinuousIntervalSpecificator::PdfPageContinuousIntervalSpecificator(int
     } else lowerPage = higherPage = firstPage;
 }
 
-PdfPageContinuousIntervalSpecificator::PdfPageContinuousIntervalSpecificator(QString descriptor)
+PdfPageContinuousIntervalSpecificator::PdfPageContinuousIntervalSpecificator(QString documentPath, QString descriptor, PdfUtil* doc)
+    :   docPath(documentPath), doc(doc)
 {
     QRegularExpressionMatch rMatch = regxp.match(descriptor);
     if(rMatch.isValid())
@@ -47,4 +49,14 @@ QList<int> PdfPageContinuousIntervalSpecificator::getAllPages() const
 QString PdfPageContinuousIntervalSpecificator::getDisplayText() const
 {
     return QString("%1 - %2").arg(QString::number(lowerPage+1), QString::number(higherPage+1));
+}
+
+QString PdfPageContinuousIntervalSpecificator::getDocumentPath() const
+{
+    return docPath;
+}
+
+PdfUtil *PdfPageContinuousIntervalSpecificator::getDocument() const
+{
+    return doc;
 }

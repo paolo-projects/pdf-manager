@@ -1,13 +1,14 @@
 #include "pdfsinglepagespecificator.h"
 
-PdfSinglePageSpecificator::PdfSinglePageSpecificator(QString descriptor)
+PdfSinglePageSpecificator::PdfSinglePageSpecificator(QString documentPath, QString descriptor, PdfUtil* doc)
+    :   docPath(documentPath), doc(doc)
 {
     page = descriptor.toInt()-1;
 }
 
-PdfSinglePageSpecificator::PdfSinglePageSpecificator(int pageNum)
+PdfSinglePageSpecificator::PdfSinglePageSpecificator(QString documentPath, int pageNum, PdfUtil* doc)
     :
-      page(pageNum)
+      page(pageNum), docPath(documentPath), doc(doc)
 {
 }
 
@@ -24,4 +25,14 @@ QList<int> PdfSinglePageSpecificator::getAllPages() const
 QString PdfSinglePageSpecificator::getDisplayText() const
 {
     return QString::number(page+1);
+}
+
+QString PdfSinglePageSpecificator::getDocumentPath() const
+{
+    return docPath;
+}
+
+PdfUtil *PdfSinglePageSpecificator::getDocument() const
+{
+    return doc;
 }
