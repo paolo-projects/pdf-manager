@@ -33,9 +33,11 @@ QVariant PdfRangesItemModel::data(const QModelIndex &index, int role) const
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid | QAbstractItemModel::CheckIndexOption::ParentIsInvalid));
 
     if (role == Qt::DisplayRole)
-        return QString("<b>%1</b> | Document: <i>%2</i>").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
+        return QString("<b>%1</b><br/><i>%2</i>").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
     else if (role == Qt::EditRole)
         return QVariant::fromValue<PdfPageRangeSpecificator*>(items.at(index.row()));
+    else if (role == Qt::ToolTipRole)
+        return QString("%1 (%2)").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
     else
         return QVariant();
 }
@@ -101,13 +103,22 @@ bool PdfRangesItemModel::removeRows(int position, int rows, const QModelIndex &p
 }
 
 bool PdfRangesItemModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
-{
+{ //TODO: fix move rows
     beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild);
-    for(int i = 0; i<count; ++i) {
-        items.insert(destinationChild + i, items[sourceRow]);
-        int removeIndex = destinationChild > sourceRow ? sourceRow : sourceRow+1;
-        items.removeAt(removeIndex);
+
+//    QList<int> removeIndexes;
+
+    for(int i = destinationChild; i<(destinationChild+count); ++i) {
+        items.insert(i, items[sourceRow + i - destinationChild]);
+//        removeIndexes << (destinationChild > sourceRow ? sourceRow : sourceRow+count);
     }
+
+//    for(auto index : removeIndexes)
+//        items.removeAt(index);
+    int deltaCount = (destinationChild < sourceRow) ? count : 0;
+    for(int i = sourceRow + deltaCount; i < (sourceRow + count + deltaCount); i++)
+        items.removeAt(i);
+
     endMoveRows();
     return true;
 }
@@ -136,24 +147,11 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
             {
                 while(!p_data.atEnd())
                 {
-                    //p_data.readRawData(reinterpret_cast<char*>(&p), sizeof(intptr_t));
                     intptr_t p;
                     p_data >> p;
                     qDebug() << "Read pointer: " << p << "\n";
                     list << p;
                 }
-
-                /*removeRows(startingRow, list.size());
-                if(rowPosition > startingRow)
-                    rowPosition -= list.size();
-
-                insertRows(rowPosition, list.size());
-                for(int i = 0; i < list.size(); i++)
-                {
-                    auto t_item = index(rowPosition + i);
-                    PdfPageRangeSpecificator* interval = reinterpret_cast<PdfPageRangeSpecificator*>(list.at(i));
-                    setData(t_item, QVariant::fromValue<PdfPageRangeSpecificator*>(interval));
-                }*/
                 moveRows(QModelIndex(), startingRow, list.size(), QModelIndex(), rowPosition);
             }
             return true;
@@ -248,4 +246,16 @@ QList<QString> PdfRangesItemModel::decodeData(QByteArray &byteArray)
         items.append(roleDataMap.value(Qt::DisplayRole).toString());
     }
     return items;
+}
+
+void PdfRangesItemModel::removeRowsOfDocument(PdfUtil *doc)
+{
+    for(int r = items.length() - 1; r >= 0; r--)
+    {
+        auto range = items.at(r);
+        if(range->getDocument() == doc)
+        {
+            removeRow(r);
+        }
+    }
 }

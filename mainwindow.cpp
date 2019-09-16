@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->newPagesList->setDragDropOverwriteMode(false);
     ui->newPagesList->setAcceptDrops(true);
 
+    QToolTipper* toolTipper = new QToolTipper();
+    ui->newPagesList->installEventFilter(toolTipper);
+
     HTMLDelegate* htmlDelegate = new HTMLDelegate();
     ui->newPagesList->setItemDelegate(htmlDelegate);
 
@@ -214,6 +217,10 @@ void MainWindow::completeProgressBar(bool error, int delay_ms)
 {
     if(error)
         progBar->setStyleSheet(errorProgBarFormat);
+
+    if(!progBar->isVisible())
+        progBar->setVisible(true);
+
     progBar->setValue(progBar->maximum());
     if(timer != nullptr) {
         delete timer;
@@ -241,7 +248,10 @@ PdfUtil *MainWindow::getCurrentlySelectedDocument()
                 docInd = index.row();
             if(docInd >= 0 && docInd < loadedDocuments.size())
                 return loadedDocuments.at(docInd);
-        } else ui->statusBar->showMessage("Before adding pages select a document.");
+        } else {
+            ui->statusBar->showMessage("Before adding pages please select a document by clicking on one of its pages.");
+            completeProgressBar(true);
+        }
     }
     return nullptr;
 }
@@ -296,20 +306,30 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
         auto pageNum = ui->pdfPagesList->indexAt(point);
         if(pageNum.isValid())
         {
-            QMenu selectionMenu;
-            QAction* action_addSelection = selectionMenu.addAction("&Add");
-            if(selectionMenu.exec(globalpos) == action_addSelection)
+            if(pageNum.parent().isValid())
             {
-                // Add item to list
-                if(pageNum.parent().isValid())
+                //Right click on page
+                QMenu selectionMenu;
+                QAction* action_addSelection = selectionMenu.addAction("&Add");
+                if(selectionMenu.exec(globalpos) == action_addSelection)
                 {
+                    // Add item to list
                     auto newItem = new PdfSinglePageSpecificator(getCurrentlySelectedDocument()->GetDocPath(), pageNum.row(), getCurrentlySelectedDocument());
                     if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
                     {
                         auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                         pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
                     }
-                } else {
+                }
+            } else {
+                //Right click on document
+                QMenu selectionMenu;
+                QAction* action_addSelection = selectionMenu.addAction("&Add whole document");
+                QAction* action_deleteSelection = selectionMenu.addAction("&Remove document and added pages");
+                auto res = selectionMenu.exec(globalpos);
+                if(res == action_addSelection)
+                {
+                    // Add whole document to list
                     auto doc = loadedDocuments.at(pageNum.row());
                     int docPageCount = doc->GetPageCount();
                     auto newItem = new PdfPageContinuousIntervalSpecificator(doc->GetDocPath(), 0, docPageCount-1, doc);
@@ -318,9 +338,17 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                         auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                         pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
                     }
+                } else if (res == action_deleteSelection)
+                {
+                    // Remove document
+                    auto doc = loadedDocuments.at(pageNum.row());
+                    loadedDocuments.removeAt(pageNum.row());
+                    pdfPageListModel->removeRow(pageNum.row());
+                    pdfPageRangesListModel->removeRowsOfDocument(doc);
+                    delete doc;
                 }
             }
-        } else {
+        }/* else { // Dropped support to right click on the empty portion of the list
             QMenu selectionMenu;
             QAction* action_addAll = selectionMenu.addAction("&Add all from selected document");
             if(selectionMenu.exec(globalpos) == action_addAll && pdfPageListModel->rowCount() > 0)
@@ -338,7 +366,7 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                     }
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -349,7 +377,7 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
     if(ui->newPagesList->selectionModel()->selectedIndexes().length() > 1)
     {
         QMenu selectionMenu;
-        QAction* action_deleteSelection = selectionMenu.addAction("&Delete selection");
+        QAction* action_deleteSelection = selectionMenu.addAction("&Remove selection");
         if(selectionMenu.exec(globalpos) == action_deleteSelection)
         {
             // Remove selection
@@ -365,7 +393,7 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
         if(pageNum.isValid())
         {
             QMenu selectionMenu;
-            QAction* action_delete = selectionMenu.addAction("&Delete");
+            QAction* action_delete = selectionMenu.addAction("&Remove");
             if(selectionMenu.exec(globalpos) == action_delete)
             {
                 // Remove item
@@ -373,7 +401,7 @@ void MainWindow::pdfNewPagesContextMenu(const QPoint &point)
             }
         } else {
             QMenu selectionMenu;
-            QAction* action_deleteAll = selectionMenu.addAction("&Delete All");
+            QAction* action_deleteAll = selectionMenu.addAction("&Remove All");
             if(selectionMenu.exec(globalpos) == action_deleteAll && pdfPageRangesListModel->rowCount() > 0)
             {
                 // Remove all
@@ -450,8 +478,7 @@ void MainWindow::on_addMultiplePagesBtn_clicked()
 
 void MainWindow::on_action_Export_PDF_triggered()
 {
-    PdfUtil* currentlyLoadedDocument = getCurrentlySelectedDocument();
-    if(currentlyLoadedDocument != nullptr && pageRanges.length() > 0)
+    if(loadedDocuments.size() > 0 && pageRanges.length() > 0)
     {
         QString fileName = QFileDialog::getSaveFileName(this, "Output file", "", "PDF File (*.pdf)");
         if(!fileName.isEmpty() && !fileName.isNull())
@@ -489,7 +516,7 @@ void MainWindow::hideProgressBar()
 
 void MainWindow::on_action_Add_all_triggered()
 {
-    PdfUtil* currentlyLoadedDocument = getCurrentlySelectedDocument();
+    /*PdfUtil* currentlyLoadedDocument = getCurrentlySelectedDocument();
     if(currentlyLoadedDocument != nullptr && currentlyLoadedDocument->GetPageCount() > 0)
     {
         auto newItem = new PdfPageContinuousIntervalSpecificator(getCurrentlySelectedDocument()->GetDocPath(), 0, currentlyLoadedDocument->GetPageCount()-1, getCurrentlySelectedDocument());
@@ -497,6 +524,20 @@ void MainWindow::on_action_Add_all_triggered()
         {
             auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
             pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+        }
+    }*/
+
+    // Add all pages from all documents
+    for(auto doc : loadedDocuments)
+    {
+        if(doc != nullptr && doc->GetPageCount() > 0)
+        {
+            auto newItem = new PdfPageContinuousIntervalSpecificator(doc->GetDocPath(), 0, doc->GetPageCount()-1, doc);
+            if(pdfPageRangesListModel->insertRow(pdfPageRangesListModel->rowCount()))
+            {
+                auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
+                pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+            }
         }
     }
 }

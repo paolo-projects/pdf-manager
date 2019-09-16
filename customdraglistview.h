@@ -13,7 +13,7 @@ class CustomDragListView : public QListView
 public:
     CustomDragListView(QWidget* parent = nullptr);
 
-    void setCurrentlyLoadedDocuments(QList<PdfUtil*> document);
+    void setCurrentlyLoadedDocuments(QList<PdfUtil*>& document);
 protected:
     void startDrag(Qt::DropActions supportedActions) override;
 

@@ -62,6 +62,7 @@ HEADERS += \
         pdfsinglepagespecificator.h \
         pdfutil.h \
         progsettings.h \
+        qtooltipper.h \
         treeitem.h \
         version.h
 

@@ -2,30 +2,40 @@
 
 void HTMLDelegate::paint(QPainter* painter, const QStyleOptionViewItem & option, const QModelIndex &index) const
 {
-    QStyleOptionViewItem options = option;
-    initStyleOption(&options, index);
-
     painter->save();
 
+    QStyleOptionViewItem options = QStyleOptionViewItem(option);
+    initStyleOption(&options, index);
+
     QTextDocument doc;
+    doc.setDocumentMargin(0);
     doc.setHtml(options.text);
-
     options.text = "";
-    options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
-    // shift text right to make icon visible
-    QSize iconSize = options.icon.actualSize(options.rect.size());
-    painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
-    QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
+    QRect rect = options.rect;
+    options.rect = QRect(rect.x()+3, rect.y(), rect.width(), rect.height());
 
-    //doc.drawContents(painter, clip);
+    QStyle* style;
 
-    painter->setClipRect(clip);
+    if(options.widget == nullptr)
+        style = QApplication::style();
+    else
+        style = options.widget->style();
+
+    style->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+
     QAbstractTextDocumentLayout::PaintContext ctx;
-    // set text color to red for selected item
+
     if (option.state & QStyle::State_Selected)
-        ctx.palette.setColor(QPalette::Text, QColor("red"));
-    ctx.clip = clip;
+        ctx.palette.setColor(QPalette::Text, Qt::red);
+                             //option.palette.color(QPalette::Active, QPalette::HighlightedText));
+
+    QRect textRect = style->subElementRect(QStyle::SE_ItemViewItemText, &options);
+
+    painter->setPen(Qt::gray);
+    painter->drawLine(0, textRect.bottomRight().y(), textRect.bottomRight().x(), textRect.bottomRight().y());
+
+    painter->translate(textRect.topLeft());
     doc.documentLayout()->draw(painter, ctx);
 
     painter->restore();
@@ -39,5 +49,6 @@ QSize HTMLDelegate::sizeHint ( const QStyleOptionViewItem & option, const QModel
     QTextDocument doc;
     doc.setHtml(options.text);
     doc.setTextWidth(options.rect.width());
-    return QSize(doc.idealWidth(), doc.size().height());
+    doc.adjustSize();
+    return QSize(doc.idealWidth(), doc.size().height()/2);
 }

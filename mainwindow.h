@@ -27,6 +27,7 @@
 #include "listnavigationeventfilter.h"
 #include "openeddocumentstreemodel.h"
 #include "htmldelegate.h"
+#include "qtooltipper.h"
 
 #include "aboutdialog.h"
 

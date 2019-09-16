@@ -5,6 +5,8 @@
 #include <QTextDocument>
 #include <QAbstractTextDocumentLayout>
 #include <QPainter>
+#include <QApplication>
+#include <QStyle>
 
 class HTMLDelegate : public QStyledItemDelegate
 {

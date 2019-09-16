@@ -7,7 +7,7 @@ CustomDragListView::CustomDragListView(QWidget* parent)
 
 }
 
-void CustomDragListView::setCurrentlyLoadedDocuments(QList<PdfUtil*> document)
+void CustomDragListView::setCurrentlyLoadedDocuments(QList<PdfUtil*>& document)
 {
     currentlyLoadedDocuments = &document;
 }

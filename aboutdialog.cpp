@@ -7,6 +7,8 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->label->setText(ui->label->text().replace("{{applicationVersion}}", VER_PRODUCTVERSION_STR, Qt::CaseSensitive));
+    ui->label->setOpenExternalLinks(true);
+    ui->label->setTextInteractionFlags(Qt::TextBrowserInteraction);
     layout()->setSizeConstraint( QLayout::SetFixedSize );
 }
 

@@ -35,6 +35,8 @@ public:
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
     QList<QString> decodeData(QByteArray& byteArray);
+
+    void removeRowsOfDocument(PdfUtil* doc);
 private:
     QList<PdfPageRangeSpecificator*>& items;
     const QStringList supportedMimeTypes = QStringList{SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, SETTINGS::DOCUMENTRANGESPECIFICATOR_MIME_TYPE};

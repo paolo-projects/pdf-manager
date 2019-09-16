@@ -41,7 +41,11 @@
       </size>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;PDF Manager {{applicationVersion}}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This software has been created by Paolo Infante and is licensed under GNU AGPL v3.0.&lt;/p&gt;&lt;p&gt;GitHub repository - &lt;a href=&quot;https://github.com/paolo-optc/pdf-manager&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/paolo-optc/pdf-manager&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Third party libraries and resources:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;muPdf - &lt;a href=&quot;https://www.mupdf.com/index.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.mupdf.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;icons8 - &lt;a href=&quot;https://icons8.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.icons8.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;table style=&quot;border: 0px;&quot;&gt;&lt;tr&gt;&lt;td&gt;
+
+&lt;img src=&quot;:/icons/res/icons8_pdf_2_96px.png&quot;/&gt;&lt;/td&gt;&lt;td&gt;&lt;p&gt;
+&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;PDF Manager {{applicationVersion}}&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This software has been created by Paolo Infante and is licensed under GNU AGPL v3.0.&lt;/p&gt;&lt;p&gt;GitHub repository - &lt;a href=&quot;https://github.com/paolo-optc/pdf-manager&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/paolo-optc/pdf-manager&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Third party libraries and resources:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;muPdf - &lt;a href=&quot;https://www.mupdf.com/index.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.mupdf.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;icons8 - &lt;a href=&quot;https://icons8.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;www.icons8.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
