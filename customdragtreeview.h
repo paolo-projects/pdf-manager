@@ -3,6 +3,8 @@
 
 #include <QTreeView>
 #include <QDrag>
+#include <QEvent>
+#include <QKeyEvent>
 
 #include "pdfpixmappainter.h"
 #include "pdfpagerangespecificator.h"

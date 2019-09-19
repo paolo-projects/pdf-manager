@@ -28,6 +28,7 @@
 #include "openeddocumentstreemodel.h"
 #include "htmldelegate.h"
 #include "qtooltipper.h"
+#include "pagegridwidget.h"
 
 #include "aboutdialog.h"
 

@@ -50,18 +50,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addPermanentWidget(progBar);
     defaultProgBarFormat = progBar->format();
 
-    pixItem.setTransformationMode(Qt::SmoothTransformation);
-    ui->pdfRenderingView->setViewport(new QGLWidget);
+    //pixItem.setTransformationMode(Qt::SmoothTransformation);
+    //ui->pdfRenderingView->setViewport(new QGLWidget);
 
     connect(ui->pdfPagesList, SIGNAL(navigationArrowPressed(int)), this, SLOT(pdfPagesArrowReceived(int )));
 
-    QPixmap blankPixmap(500,500);
+    /*QPixmap blankPixmap(500,500);
     blankPixmap.fill(Qt::white);
     pixItem.setPixmap(blankPixmap);
 
     grScene = new QGraphicsScene();
     grScene->addItem(&pixItem);
-    ui->pdfRenderingView->setScene(grScene);
+    ui->pdfRenderingView->setScene(grScene);*/
 
     connect(ui->newPagesList->model(), SIGNAL(rowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )), this, SLOT(pdfNewPagesModelRowsMoved(const QModelIndex &, int , int , const QModelIndex &, int )));
     connect(ui->newPagesList, SIGNAL(indexesMoved(const QModelIndexList &)), this, SLOT(pdfNewPagesListIndexesMoved(const QModelIndexList &)));
@@ -126,7 +126,7 @@ void MainWindow::setCurrentlyDisplayedPage(int pageNum, int docIndex)
     {
         try
         {
-            startProgressBar(100);
+            /*startProgressBar(100);
             auto page = currentlyLoadedDocument->GetPdfRenderedPage(pageNum);
             incrementProgressBar(33);
             if(displayedPage != nullptr)
@@ -146,7 +146,7 @@ void MainWindow::setCurrentlyDisplayedPage(int pageNum, int docIndex)
             ui->pdfRenderingView->setScene(grScene);
 
             ui->pdfRenderingView->fitInView(&pixItem, Qt::KeepAspectRatio);
-            completeProgressBar();
+            completeProgressBar();*/
         } catch (const PdfException& exception) {
             completeProgressBar(true);
             QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
@@ -196,7 +196,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
 
-    ui->pdfRenderingView->fitInView(&pixItem, Qt::KeepAspectRatio);
+    //ui->pdfRenderingView->fitInView(&pixItem, Qt::KeepAspectRatio);
 }
 
 void MainWindow::startProgressBar(int maxValue, int initialValue, bool showText)
@@ -273,10 +273,17 @@ void MainWindow::on_pdfPagesList_clicked(const QModelIndex &index)
     {
         page = qvariant_cast<QString>(index.data()).toInt()-1;
         parent = index.parent().row();
+        auto doc = ui->pdfRenderingView->getCurrentDoc();
+        if(doc != loadedDocuments.at(parent))
+            ui->pdfRenderingView->displayDocPages(loadedDocuments.at(parent));
+
+        ui->pdfRenderingView->navigateToPage(page);
     } else {
         parent = index.row();
+        ui->pdfRenderingView->displayDocPages(loadedDocuments.at(parent));
     }
-    setCurrentlyDisplayedPage(page, parent);
+    //setCurrentlyDisplayedPage(page, parent);
+
 }
 
 void MainWindow::pdfPagesContextMenu(const QPoint &point)
@@ -342,6 +349,10 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                 {
                     // Remove document
                     auto doc = loadedDocuments.at(pageNum.row());
+
+                    if(doc == ui->pdfRenderingView->getCurrentDoc())
+                        ui->pdfRenderingView->removeAllWidgets();
+
                     loadedDocuments.removeAt(pageNum.row());
                     pdfPageListModel->removeRow(pageNum.row());
                     pdfPageRangesListModel->removeRowsOfDocument(doc);

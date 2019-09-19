@@ -28,11 +28,13 @@ SOURCES += \
         aboutdialog.cpp \
         customdraglistview.cpp \
         customdragtreeview.cpp \
+        drageventfilter.cpp \
         htmldelegate.cpp \
         listnavigationeventfilter.cpp \
         main.cpp \
         mainwindow.cpp \
         openeddocumentstreemodel.cpp \
+        pagegridwidget.cpp \
         pdfmultiplepagesspecificator.cpp \
         pdfnewdocument.cpp \
         pdfpagecontinuousintervalspecificator.cpp \
@@ -47,10 +49,13 @@ HEADERS += \
         aboutdialog.h \
         customdraglistview.h \
         customdragtreeview.h \
+        delayedaction.h \
+        drageventfilter.h \
         htmldelegate.h \
         listnavigationeventfilter.h \
         mainwindow.h \
         openeddocumentstreemodel.h \
+        pagegridwidget.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \
         pdfnewdocument.h \

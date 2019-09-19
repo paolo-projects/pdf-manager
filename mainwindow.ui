@@ -56,10 +56,7 @@
             <enum>QAbstractItemView::ContiguousSelection</enum>
            </property>
           </widget>
-          <widget class="QGraphicsView" name="pdfRenderingView">
-           <property name="renderHints">
-            <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::TextAntialiasing</set>
-           </property>
+          <widget class="PageGridWidget" name="pdfRenderingView">
           </widget>
          </widget>
         </item>
