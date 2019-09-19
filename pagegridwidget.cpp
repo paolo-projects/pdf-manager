@@ -202,9 +202,9 @@ void PageGridWidget::repaintThumbnails()
 void PageGridWidget::paintText(QPixmap &pixmap, QString text)
 {
     QPainter* p = new QPainter(&pixmap);
-    p->setOpacity(0.4);
+    p->setOpacity(0.6);
     QRect blackRect(QPoint(0, pixmap.height()-56), QPoint(pixmap.width(), pixmap.height()));
-    p->fillRect(blackRect, QBrush(Qt::black));
+    p->fillRect(blackRect, QBrush(Qt::darkGreen));
     p->setOpacity(1.0);
     p->setPen(Qt::white);
     p->setFont(QFont("Arial", 12, QFont::Bold));
