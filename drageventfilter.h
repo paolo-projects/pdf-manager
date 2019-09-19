@@ -2,6 +2,7 @@
 #define DRAGEVENTFILTER_H
 
 #include <QObject>
+#include <QPainter>
 
 class PageGridWidget;
 

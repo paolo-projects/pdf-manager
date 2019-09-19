@@ -52,7 +52,7 @@ private:
 
     int itemWidth, itemHeight;
 
-    static constexpr int columnsPerRow = 3;
+    int columnsPerRow = 3;
 
     QList<QPixmap> loadedPixmaps;
     PdfUtil* currDoc;
@@ -66,6 +66,7 @@ private:
 
     void repaintThumbnails();
 
+    void paintText(QPixmap& pixmap, QString text);
 protected:
     void resizeEvent(QResizeEvent *event) override;
     DragEventFilter* dragEventFilter;

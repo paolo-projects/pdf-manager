@@ -35,7 +35,20 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
             mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);
 
             drag->setMimeData(mimeData);
-            QPixmap dragPixmap(*lbl->pixmap());
+            QPixmap dragPixmap = QPixmap::fromImage(*parWidget->getCurrentDoc()->GetPdfRenderedPageThumb(pageNum)->getImage());
+            QPainter painter(&dragPixmap);
+
+            QPoint topLeft(0,0);
+            QPoint bottomRight(dragPixmap.size().width(), dragPixmap.size().height());
+            painter.setPen(Qt::black);
+
+            painter.drawLine(topLeft.x(), topLeft.y(), bottomRight.x() - 1, topLeft.y()); // Top border
+            painter.drawLine(bottomRight.x() - 1, topLeft.y(), bottomRight.x() - 1, bottomRight.y() - 1); // Right border
+            painter.drawLine(bottomRight.x() - 1, bottomRight.y() - 1, topLeft.x(), bottomRight.y() - 1); // Bottom border
+            painter.drawLine(topLeft.x(), bottomRight.y() - 1, topLeft.x(), topLeft.y()); // Left border
+
+            painter.end();
+
             drag->setPixmap(dragPixmap);
 
             drag->exec();

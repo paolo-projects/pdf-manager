@@ -43,6 +43,8 @@ void PageGridWidget::displayDocPages(PdfUtil *doc)
     {
         QLabel* pic = new QLabel();
 
+        pic->setText(QString::number(page+1));
+
         pic->installEventFilter(dragEventFilter);
 
         //delete pageImage;
@@ -68,15 +70,12 @@ void PageGridWidget::displayDocPages(PdfUtil *doc)
 
     repaint();
 
-    renderedPages.resize(doc->GetPageCount());
-    renderedPages.fill(false);
-
-    for(int n = 0; n < std::min(displayedPictures.length(), 15); n++)
+    for(int n = 0; n < std::min(displayedPictures.length(), (int)(std::floor(height()/350)+2)*columnsPerRow); n++)
     {
         QLabel* pic = displayedPictures.at(n);
         if(pic->pixmap() == nullptr)
         {
-            auto renderedPage = currDoc->GetPdfRenderedPage(n);
+            auto renderedPage = currDoc->GetPdfRenderedPageThumb(n);
 
             pic->setMinimumSize(renderedPage->getWidth(), renderedPage->getHeight());
             auto pageImage = renderedPage->getImage();
@@ -93,7 +92,10 @@ void PageGridWidget::displayDocPages(PdfUtil *doc)
             delete pageImage;
             delete renderedPage;
 
+            paintText(p, QString::number(n+1));
+
             pic->setPixmap(p);
+
             pic->setFixedSize(p.size());
 
         }
@@ -127,22 +129,22 @@ void PageGridWidget::removeAllWidgets()
 
 bool PageGridWidget::compareDisplayRanges(QPair<int,int>& displayRange, QPair<int,int>& prefDisplayRange)
 {
-    return (displayRange.first >= prefDisplayRange.first + 6) &&
-            (displayRange.second <= prefDisplayRange.second - 6);
+    return (displayRange.first >= prefDisplayRange.first + columnsPerRow*2) &&
+            (displayRange.second <= prefDisplayRange.second - columnsPerRow*2);
 }
 
 QPair<int, int> PageGridWidget::getPreferredDisplayRange()
 {
     auto dispRange = getDisplayRange();
-    dispRange.first = std::max(dispRange.first - 12, 0);
-    dispRange.second = std::min(dispRange.second + 12, displayedPictures.length()-1);
+    dispRange.first = std::max(dispRange.first - columnsPerRow*4, 0);
+    dispRange.second = std::min(dispRange.second + columnsPerRow*4, displayedPictures.length()-1);
     return dispRange;
 }
 
 QPair<int, int> PageGridWidget::getDisplayRange()
 {
     QSize currentSize = size();
-    int toDisplay = std::ceil(currentSize.height()/350.0)*3;
+    int toDisplay = std::ceil(currentSize.height()/350.0)*columnsPerRow;
     int firstDisplayed = 0;
     for(int i = 0; i < displayedPictures.length(); i++)
         if(!displayedPictures.at(i)->visibleRegion().isNull())
@@ -170,7 +172,7 @@ void PageGridWidget::repaintThumbnails()
             {
                 if(pic->pixmap() == nullptr)
                 {
-                    auto renderedPage = currDoc->GetPdfRenderedPage(n);
+                    auto renderedPage = currDoc->GetPdfRenderedPageThumb(n);
 
                     pic->setMinimumSize(renderedPage->getWidth(), renderedPage->getHeight());
                     auto pageImage = renderedPage->getImage();
@@ -185,6 +187,8 @@ void PageGridWidget::repaintThumbnails()
                     delete pageImage;
                     delete renderedPage;
 
+                    paintText(p, QString::number(n+1));
+
                     pic->setPixmap(p);
                     pic->setFixedSize(p.size());
 
@@ -193,6 +197,19 @@ void PageGridWidget::repaintThumbnails()
                 pic->clear();
         }
     }
+}
+
+void PageGridWidget::paintText(QPixmap &pixmap, QString text)
+{
+    QPainter* p = new QPainter(&pixmap);
+    p->setOpacity(0.4);
+    QRect blackRect(QPoint(0, pixmap.height()-56), QPoint(pixmap.width(), pixmap.height()));
+    p->fillRect(blackRect, QBrush(Qt::black));
+    p->setOpacity(1.0);
+    p->setPen(Qt::white);
+    p->setFont(QFont("Arial", 12, QFont::Bold));
+    p->drawText(pixmap.rect().marginsRemoved(QMargins(20, 20, 20, 20)), Qt::AlignBottom, text); //play around to display your text exactly how you need.
+    p->end();
 }
 
 int PageGridWidget::indexOf(QLabel *lbl)
@@ -227,5 +244,6 @@ void PageGridWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     qDebug() << "Resized";
+    columnsPerRow = std::max(3, (int)std::floor(width()/350));
     repaintThumbnails();
 }

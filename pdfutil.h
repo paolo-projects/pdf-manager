@@ -18,6 +18,7 @@ public:
     ~PdfUtil();
     int GetPageCount() const;
     PdfRenderedPage*  GetPdfRenderedPage(int pageNum);
+    PdfRenderedPage*  GetPdfRenderedPageThumb(int pageNum);
     QString GetDocName() const;
     QString GetDocPath() const;
     class PdfNewDocument;
@@ -28,6 +29,7 @@ private:
     fz_document* pdf_doc = nullptr;
     fz_pixmap* pdf_pixmap = nullptr;
     fz_matrix pdf_matrix;
+    fz_matrix pdf_matrix_thumb;
     int zoom = 100;
     int rotation = 0;
 };

@@ -38,7 +38,7 @@ void CustomDragTreeView::startDrag(Qt::DropActions supportedActions)
                 QDrag *drag = new QDrag(this);
                 drag->setPixmap(page);
                 drag->setMimeData(data);
-                drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
+                //drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
                 Qt::DropAction defAction = Qt::IgnoreAction;
                 if (defaultDropAction() != Qt::IgnoreAction && (supportedActions & defaultDropAction()))
                     defAction = defaultDropAction();
@@ -81,7 +81,7 @@ void CustomDragTreeView::startDrag(Qt::DropActions supportedActions)
                 QDrag *drag = new QDrag(this);
                 drag->setPixmap(page);
                 drag->setMimeData(data);
-                drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
+                //drag->setHotSpot(QPoint(-48,-48)); //d->pressedPosition - rect.topLeft());
                 Qt::DropAction defAction = Qt::IgnoreAction;
                 if (defaultDropAction() != Qt::IgnoreAction && (supportedActions & defaultDropAction()))
                     defAction = defaultDropAction();
