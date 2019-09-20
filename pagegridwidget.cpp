@@ -1,6 +1,6 @@
 #include "pagegridwidget.h"
 
-PageGridWidget::PageGridWidget(QWidget *parent) : QWidget(parent)
+PageGridWidget::PageGridWidget(QWidget *parent) : QWidget(parent), currentRubberBand(QRubberBand::Rectangle, this)
 {
     mainLayout = new QVBoxLayout();
 
@@ -41,7 +41,7 @@ void PageGridWidget::displayDocPages(PdfUtil *doc)
 
     for(int page = 0; page < doc->GetPageCount(); page++)
     {
-        QLabel* pic = new QLabel();
+        CustomSelectionQLabel* pic = new CustomSelectionQLabel();
 
         pic->setText(QString::number(page+1));
 
@@ -125,6 +125,8 @@ void PageGridWidget::removeAllWidgets()
     displayedPictures.clear();
 
     loadedPixmaps.clear();
+
+    selectedPages.clear();
 }
 
 bool PageGridWidget::compareDisplayRanges(QPair<int,int>& displayRange, QPair<int,int>& prefDisplayRange)
@@ -212,6 +214,26 @@ void PageGridWidget::paintText(QPixmap &pixmap, QString text)
     p->end();
 }
 
+bool PageGridWidget::isSelectable() const
+{
+    return selectable;
+}
+
+void PageGridWidget::setIsSelectable(bool isSelectable)
+{
+    selectable = isSelectable;
+}
+
+void PageGridWidget::decorate(CustomSelectionQLabel *widget, bool decorate)
+{
+    if(decorate)
+    {
+        widget->showSelectionOverlay(true);
+    } else {
+        widget->showSelectionOverlay(false);
+    }
+}
+
 int PageGridWidget::indexOf(QLabel *lbl)
 {
     for(int i = 0; i < displayedPictures.length(); i++)
@@ -240,10 +262,78 @@ void PageGridWidget::navigateToPage(int pageNum)
     }
 }
 
+QList<int> PageGridWidget::getSelectedPages() const
+{
+    return selectedPages;
+}
+
+void PageGridWidget::clearSelectedPages()
+{
+    selectedPages.clear();
+}
+
 void PageGridWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     qDebug() << "Resized";
     columnsPerRow = std::max(3, (int)std::floor(width()/350));
     repaintThumbnails();
+}
+
+void PageGridWidget::mousePressEvent(QMouseEvent *event)
+{
+    if(selectable)
+    {
+        mouseSelectionOrigin = event->pos();
+
+        currentRubberBand.setGeometry(QRect(mouseSelectionOrigin, QSize()));
+        currentRubberBand.show();
+
+        selectedPages.clear();
+        for(auto lbl : displayedPictures)
+            decorate(lbl, false);
+    }
+
+    return QWidget::mousePressEvent(event);
+}
+
+void PageGridWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(currentRubberBand.isVisible())
+    {
+        currentRubberBand.hide();
+    }
+
+    return QWidget::mouseReleaseEvent(event);
+}
+
+void PageGridWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if(currentRubberBand.isVisible())
+    {
+        QRect rbRect(mouseSelectionOrigin, event->pos());
+        currentRubberBand.setGeometry(rbRect.normalized());
+        bool f = true;
+        for(auto lbl : displayedPictures)
+        {
+            auto pos = lbl->pos();
+            if(f) {qDebug() << "Label pos: " << pos;}
+            pos.setX(pos.x() + lbl->width()/2);
+            int scrollDelta = (scrollArea->verticalScrollBar() != nullptr)?scrollArea->verticalScrollBar()->value():0;
+            if(f){qDebug() << scrollDelta;}
+            pos.setY(pos.y() - scrollDelta + lbl->height()/2);
+            if(f){qDebug() << "Final pos: " << pos; f=false;}
+
+            if(rbRect.contains(pos))
+            {
+                selectedPages.append(indexOf(lbl));
+                decorate(lbl, true);
+            } else {
+                selectedPages.removeAll(indexOf(lbl));
+                decorate(lbl, false);
+            }
+        }
+    }
+
+    return QWidget::mouseMoveEvent(event);
 }

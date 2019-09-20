@@ -71,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pageRangeLastTxt, SIGNAL(returnPressed()), ui->addPageRangeBtn, SIGNAL(clicked()));
     connect(ui->pageRangeFirstTxt, SIGNAL(returnPressed()), ui->addPageRangeBtn, SIGNAL(clicked()));
     connect(ui->multiplePagesTxt, SIGNAL(returnPressed()), ui->addMultiplePagesBtn, SIGNAL(clicked()));
+
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow()
@@ -254,6 +256,56 @@ PdfUtil *MainWindow::getCurrentlySelectedDocument()
         }
     }
     return nullptr;
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    bool hasPdf = true;
+    if(event->mimeData()->hasUrls())
+    {
+        auto urls = event->mimeData()->urls();
+        for(auto url : urls)
+        {
+            QFileInfo fInfo(url.toLocalFile());
+            if(fInfo.suffix() != "pdf")
+            {
+                hasPdf = false;
+                break;
+            }
+        }
+        if(hasPdf)
+            event->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    auto urls = event->mimeData()->urls();
+
+    try
+    {
+        int pdfFiles = 0;
+        for(auto url : urls)
+        {
+            QFileInfo fInfo(url.toLocalFile());
+            if(fInfo.suffix() == "pdf")
+            {
+                    auto pdfDoc = new PdfUtil(url.toLocalFile());
+
+                    loadedDocuments.append(pdfDoc);
+
+                    addPdfPageList(loadedDocuments.last());
+
+                    pdfFiles++;
+            }
+        }
+
+        ui->statusBar->showMessage(QString::number(pdfFiles)+" PDF files loaded.");
+    } catch (const PdfException& exception)
+    {
+        completeProgressBar(true);
+        QMessageBox::critical(this, "Error", "Error!\n"+exception.getMessage());
+    }
 }
 
 void MainWindow::on_pdfPagesList_doubleClicked(const QModelIndex &index)

@@ -28,6 +28,7 @@ SOURCES += \
         aboutdialog.cpp \
         customdraglistview.cpp \
         customdragtreeview.cpp \
+        customselectionqlabel.cpp \
         drageventfilter.cpp \
         htmldelegate.cpp \
         listnavigationeventfilter.cpp \
@@ -49,12 +50,14 @@ HEADERS += \
         aboutdialog.h \
         customdraglistview.h \
         customdragtreeview.h \
+        customselectionqlabel.h \
         delayedaction.h \
         drageventfilter.h \
         htmldelegate.h \
         listnavigationeventfilter.h \
         mainwindow.h \
         openeddocumentstreemodel.h \
+        overlay.h \
         pagegridwidget.h \
         pdfexception.h \
         pdfmultiplepagesspecificator.h \

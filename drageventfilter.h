@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QPainter>
 
+#include "pdfpagecontinuousintervalspecificator.h"
+#include "pdfpixmappainter.h"
+
 class PageGridWidget;
 
 // Event watcher

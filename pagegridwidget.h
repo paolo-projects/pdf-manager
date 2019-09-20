@@ -15,7 +15,9 @@
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
-#include <QTimer>
+#include <QItemSelectionModel>
+#include <QRubberBand>
+#include <QScrollBar>
 
 #include "pdfutil.h"
 #include "pdfrenderedpage.h"
@@ -23,6 +25,7 @@
 #include "pdfsinglepagespecificator.h"
 #include "drageventfilter.h"
 #include "delayedaction.h"
+#include "customselectionqlabel.h"
 
 class PageGridWidget : public QWidget
 {
@@ -38,6 +41,8 @@ public:
     int indexOf(QLabel* lbl);
     PdfUtil* getCurrentDoc();
     void navigateToPage(int pageNum);
+    QList<int> getSelectedPages() const;
+    void clearSelectedPages();
 signals:
 
 public slots:
@@ -47,7 +52,7 @@ private:
     QScrollArea* scrollArea;
     QWidget* scrollAreaWidget;
     QGridLayout* gridLayout;
-    QList<QLabel*> displayedPictures;
+    QList<CustomSelectionQLabel*> displayedPictures;
     QVBoxLayout* mainLayout;
 
     int itemWidth, itemHeight;
@@ -58,6 +63,13 @@ private:
     PdfUtil* currDoc;
     QVector<bool> renderedPages;
 
+    bool selectable = true;
+    QList<int> selectedPages;
+    QRubberBand currentRubberBand;
+    QPoint mouseSelectionOrigin;
+
+    // Methods
+
     QPair<int, int> getPreferredDisplayRange();
     QPair<int, int> getDisplayRange();
 
@@ -67,9 +79,20 @@ private:
     void repaintThumbnails();
 
     void paintText(QPixmap& pixmap, QString text);
+
+    bool isSelectable() const;
+    void setIsSelectable(bool isSelectable);
+    void decorate(CustomSelectionQLabel* widget, bool decorate);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
     DragEventFilter* dragEventFilter;
+
+    // QWidget interface
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 #endif // PAGEGRIDWIDGET_H

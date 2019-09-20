@@ -24,10 +24,22 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
 
             pointersStream << -1;
 
-            int pageNum = parWidget->indexOf(lbl);
-            pageNum = (pageNum >= 0) ? pageNum : 0;
+            PdfPageRangeSpecificator* rangedata;
 
-            PdfSinglePageSpecificator* rangedata = new PdfSinglePageSpecificator(parWidget->getCurrentDoc()->GetDocPath(), pageNum, parWidget->getCurrentDoc());
+            QPixmap dragPixmap;
+
+            auto selection = parWidget->getSelectedPages();
+            if(selection.length()>0)
+            {
+                std::sort(selection.begin(), selection.end(), std::less<int>());
+                rangedata = new PdfPageContinuousIntervalSpecificator(parWidget->getCurrentDoc()->GetDocPath(), selection.first(), selection.last(), parWidget->getCurrentDoc());
+                dragPixmap = PDFPixmapPainter::getPageRangePixmap(parWidget->getCurrentDoc(), selection.first(), selection.last());
+            } else {
+                int pageNum = parWidget->indexOf(lbl);
+                pageNum = (pageNum >= 0) ? pageNum : 0;
+                rangedata = new PdfSinglePageSpecificator(parWidget->getCurrentDoc()->GetDocPath(), pageNum, parWidget->getCurrentDoc());
+                dragPixmap = QPixmap::fromImage(*parWidget->getCurrentDoc()->GetPdfRenderedPageThumb(pageNum)->getImage());
+            }
 
             intptr_t p = reinterpret_cast<intptr_t>(rangedata);
             pointersStream << p;
@@ -35,7 +47,7 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
             mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);
 
             drag->setMimeData(mimeData);
-            QPixmap dragPixmap = QPixmap::fromImage(*parWidget->getCurrentDoc()->GetPdfRenderedPageThumb(pageNum)->getImage());
+
             QPainter painter(&dragPixmap);
 
             QPoint topLeft(0,0);
