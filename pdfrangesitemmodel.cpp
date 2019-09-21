@@ -148,7 +148,9 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
                 while(!p_data.atEnd())
                 {
                     intptr_t p;
-                    p_data >> p;
+                    RawPointer r_p;
+                    p_data >> r_p;
+                    p = r_p.pointer;
                     qDebug() << "Read pointer: " << p << "\n";
                     list << p;
                 }
@@ -165,7 +167,9 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
                 intptr_t p;
                 while(!p_data.atEnd())
                 {
-                    p_data >> p;
+                    RawPointer r_p;
+                    p_data >> r_p;
+                    p = r_p.pointer;
                     list << p;
                 }
 
@@ -210,7 +214,9 @@ QMimeData *PdfRangesItemModel::mimeData(const QModelIndexList &indexes) const
         intptr_t p = reinterpret_cast<intptr_t>(items.at(index.row()));
         //pointersStream.writeRawData(reinterpret_cast<char*>(&p), sizeof(intptr_t));
         qDebug() << "Writing pointer: " << p << "\n";
-        pointersStream << p;
+        RawPointer r_p;
+        pointersStream << r_p;
+        p = r_p.pointer;
     }
 
     mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);

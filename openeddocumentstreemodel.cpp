@@ -32,8 +32,8 @@ QMimeData *OpenedDocumentsTreeModel::mimeData(const QModelIndexList &indexes) co
 
     dataStream << int(-1);
 
-    intptr_t pointer = reinterpret_cast<intptr_t>(range);
-    dataStream << pointer;
+    //intptr_t pointer = reinterpret_cast<intptr_t>(range);
+    dataStream << RawPointer(range);
 
     QMimeData* mimeData = new QMimeData();
     mimeData->setData(defMimeTypes[0], data);

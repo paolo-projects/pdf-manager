@@ -11,6 +11,7 @@
 #include "pdfpagecontinuousintervalspecificator.h"
 #include "pdfsinglepagespecificator.h"
 #include "progsettings.h"
+#include "rawpointer.h"
 
 class PdfRangesItemModel : public QAbstractItemModel
 {

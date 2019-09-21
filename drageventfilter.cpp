@@ -45,8 +45,8 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
 
             DelayedMimeData *mimeData = new DelayedMimeData(true, "extract-" % parWidget->getCurrentDoc()->GetDocName(), rangedata);
 
-            intptr_t p = reinterpret_cast<intptr_t>(rangedata);
-            pointersStream << p;
+            //intptr_t p = reinterpret_cast<intptr_t>(rangedata);
+            pointersStream << RawPointer(rangedata);
 
             mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);
 

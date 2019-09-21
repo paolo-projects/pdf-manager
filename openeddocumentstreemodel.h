@@ -11,6 +11,7 @@
 #include "pdfpagerangespecificator.h"
 #include "pdfpagecontinuousintervalspecificator.h"
 #include "pdfsinglepagespecificator.h"
+#include "rawpointer.h"
 
 class OpenedDocumentsTreeModel : public QStandardItemModel
 {

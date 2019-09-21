@@ -31,3 +31,4 @@ class PdfUtil::PdfNewDocument
         void addPageFromParent(pdf_document* doc_src, int pageNum);
 };
 #endif // PDFNEWDOCUMENT_H
+

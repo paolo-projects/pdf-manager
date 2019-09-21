@@ -1,6 +1,8 @@
 #ifndef PAGEGRIDWIDGET_H
 #define PAGEGRIDWIDGET_H
 
+#include <cmath>
+
 #include <QWidget>
 #include <QScrollArea>
 #include <QGridLayout>

@@ -1,12 +1,13 @@
 #ifndef DRAGEVENTFILTER_H
 #define DRAGEVENTFILTER_H
 
-#include <QObject>
 #include <QPainter>
+#include <QDataStream>
 
 #include "pdfpagecontinuousintervalspecificator.h"
 #include "pdfpixmappainter.h"
 #include "delayedmimedata.h"
+#include "rawpointer.h"
 
 class PageGridWidget;
 
