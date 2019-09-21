@@ -3,9 +3,10 @@
 An open source cross-platform Qt application to extract pages from a PDF file and save them to another one.
 
 ### Releases
+##### Windows
 You can find **Win32 (discontinued)**, **Win64** installers and **Mac OSX 10.12+** release in the *releases* section.
 
-### Mac OSX
+##### Mac OSX
 A Mac OSX release is provided, although the feature that allows you to drag selected pages from the app to your desktop to quickly create a shrinked PDF file is working only on windows atm.
 
 ### Compile
