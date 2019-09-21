@@ -6,6 +6,7 @@
 
 #include "pdfpagecontinuousintervalspecificator.h"
 #include "pdfpixmappainter.h"
+#include "delayedmimedata.h"
 
 class PageGridWidget;
 

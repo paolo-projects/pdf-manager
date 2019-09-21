@@ -17,7 +17,6 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
             QLabel* lbl = static_cast<QLabel*>(object);
 
             QDrag *drag = new QDrag(this);
-            QMimeData *mimeData = new QMimeData;
 
             QByteArray pointersData;
             QDataStream pointersStream(&pointersData, QIODevice::WriteOnly);
@@ -40,6 +39,11 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
                 rangedata = new PdfSinglePageSpecificator(parWidget->getCurrentDoc()->GetDocPath(), pageNum, parWidget->getCurrentDoc());
                 dragPixmap = QPixmap::fromImage(*parWidget->getCurrentDoc()->GetPdfRenderedPageThumb(pageNum)->getImage());
             }
+
+            // This subclass allows dropping the pages directly to OS filesystem, allowing a quick creation of pdf with small subsets of pages
+            // However, this has been tested with Window, but not with other OS like Linux or Mac
+
+            DelayedMimeData *mimeData = new DelayedMimeData(true, "extract-" % parWidget->getCurrentDoc()->GetDocName(), rangedata);
 
             intptr_t p = reinterpret_cast<intptr_t>(rangedata);
             pointersStream << p;
