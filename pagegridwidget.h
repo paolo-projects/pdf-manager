@@ -43,7 +43,7 @@ public:
     int indexOf(QLabel* lbl);
     PdfUtil* getCurrentDoc();
     void navigateToPage(int pageNum);
-    QList<int> getSelectedPages() const;
+    QSet<int> getSelectedPages() const;
     void clearSelectedPages();
 signals:
 
@@ -66,7 +66,7 @@ private:
     QVector<bool> renderedPages;
 
     bool selectable = true;
-    QList<int> selectedPages;
+    QSet<int> selectedPages;
     QRubberBand currentRubberBand;
     QPoint mouseSelectionOrigin;
 

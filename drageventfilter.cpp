@@ -28,11 +28,13 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
             QPixmap dragPixmap;
 
             auto selection = parWidget->getSelectedPages();
-            if(selection.length()>0)
+            if(selection.size()>1)
             {
-                std::sort(selection.begin(), selection.end(), std::less<int>());
-                rangedata = new PdfPageContinuousIntervalSpecificator(parWidget->getCurrentDoc()->GetDocPath(), selection.first(), selection.last(), parWidget->getCurrentDoc());
-                dragPixmap = PDFPixmapPainter::getPageRangePixmap(parWidget->getCurrentDoc(), selection.first(), selection.last());
+                auto selectionList = QList<int>::fromSet(selection);
+                std::sort(selectionList.begin(), selectionList.end(), std::less<int>());
+
+                rangedata = new PdfMultiplePagesSpecificator(parWidget->getCurrentDoc()->GetDocPath(), selectionList, parWidget->getCurrentDoc());
+                dragPixmap = PDFPixmapPainter::getPageRangePixmap(parWidget->getCurrentDoc(), selectionList.first(), selectionList.last());
             } else {
                 int pageNum = parWidget->indexOf(lbl);
                 pageNum = (pageNum >= 0) ? pageNum : 0;
@@ -40,35 +42,7 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
                 dragPixmap = QPixmap::fromImage(*parWidget->getCurrentDoc()->GetPdfRenderedPageThumb(pageNum)->getImage());
             }
 
-            // This subclass allows dropping the pages directly to OS filesystem, allowing a quick creation of pdf with small subsets of pages
-
-#ifndef Q_OS_MACOS
-            DelayedMimeData *mimeData = new DelayedMimeData(true, "extract-" % parWidget->getCurrentDoc()->GetDocName(), rangedata);
-
-            //intptr_t p = reinterpret_cast<intptr_t>(rangedata);
-            pointersStream << RawPointer(rangedata);
-
-            mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);
-
-            drag->setMimeData(mimeData);
-
-            QPainter painter(&dragPixmap);
-
-            QPoint topLeft(0,0);
-            QPoint bottomRight(dragPixmap.size().width(), dragPixmap.size().height());
-            painter.setPen(Qt::black);
-
-            painter.drawLine(topLeft.x(), topLeft.y(), bottomRight.x() - 1, topLeft.y()); // Top border
-            painter.drawLine(bottomRight.x() - 1, topLeft.y(), bottomRight.x() - 1, bottomRight.y() - 1); // Right border
-            painter.drawLine(bottomRight.x() - 1, bottomRight.y() - 1, topLeft.x(), bottomRight.y() - 1); // Bottom border
-            painter.drawLine(topLeft.x(), bottomRight.y() - 1, topLeft.x(), topLeft.y()); // Left border
-
-            painter.end();
-
-            drag->setPixmap(dragPixmap);
-
-            drag->exec(Qt::CopyAction | Qt::LinkAction);
-#else
+            // This code allows dropping the pages directly to OS filesystem, allowing a quick creation of pdf with small subsets of pages
             QMimeData* mimeData = new QMimeData();
             QString fName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/extract-" + parWidget->getCurrentDoc()->GetDocName();
 
@@ -101,8 +75,8 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
 
             drag->setPixmap(dragPixmap);
 
-            drag->start(Qt::LinkAction | Qt::CopyAction);
-#endif
+            drag->exec(Qt::LinkAction | Qt::CopyAction);
+
             return true;
         }
     }

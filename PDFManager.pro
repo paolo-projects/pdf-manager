@@ -29,7 +29,6 @@ SOURCES += \
         customdraglistview.cpp \
         customdragtreeview.cpp \
         customselectionqlabel.cpp \
-        delayedmimedata.cpp \
         drageventfilter.cpp \
         htmldelegate.cpp \
         listnavigationeventfilter.cpp \
@@ -53,7 +52,6 @@ HEADERS += \
         customdragtreeview.h \
         customselectionqlabel.h \
         delayedaction.h \
-        delayedmimedata.h \
         drageventfilter.h \
         htmldelegate.h \
         listnavigationeventfilter.h \

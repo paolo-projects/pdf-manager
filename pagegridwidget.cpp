@@ -262,7 +262,7 @@ void PageGridWidget::navigateToPage(int pageNum)
     }
 }
 
-QList<int> PageGridWidget::getSelectedPages() const
+QSet<int> PageGridWidget::getSelectedPages() const
 {
     return selectedPages;
 }
@@ -313,23 +313,20 @@ void PageGridWidget::mouseMoveEvent(QMouseEvent *event)
     {
         QRect rbRect(mouseSelectionOrigin, event->pos());
         currentRubberBand.setGeometry(rbRect.normalized());
-        bool f = true;
+
         for(auto lbl : displayedPictures)
         {
             auto pos = lbl->pos();
-            if(f) {qDebug() << "Label pos: " << pos;}
             pos.setX(pos.x() + lbl->width()/2);
             int scrollDelta = (scrollArea->verticalScrollBar() != nullptr)?scrollArea->verticalScrollBar()->value():0;
-            if(f){qDebug() << scrollDelta;}
             pos.setY(pos.y() - scrollDelta + lbl->height()/2);
-            if(f){qDebug() << "Final pos: " << pos; f=false;}
 
             if(rbRect.contains(pos))
             {
-                selectedPages.append(indexOf(lbl));
+                selectedPages.insert(indexOf(lbl));
                 decorate(lbl, true);
             } else {
-                selectedPages.removeAll(indexOf(lbl));
+                selectedPages.remove(indexOf(lbl));
                 decorate(lbl, false);
             }
         }

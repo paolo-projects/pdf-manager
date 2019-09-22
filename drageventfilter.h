@@ -3,11 +3,12 @@
 
 #include <QPainter>
 #include <QDataStream>
+#include <QStandardPaths>
 
-#include "pdfpagecontinuousintervalspecificator.h"
+#include "pdfmultiplepagesspecificator.h"
 #include "pdfpixmappainter.h"
-#include "delayedmimedata.h"
 #include "rawpointer.h"
+#include "pdfnewdocument.h"
 
 class PageGridWidget;
 
