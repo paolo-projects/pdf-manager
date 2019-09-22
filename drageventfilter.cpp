@@ -41,8 +41,8 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
             }
 
             // This subclass allows dropping the pages directly to OS filesystem, allowing a quick creation of pdf with small subsets of pages
-            // However, this has been tested with Window, but not with other OS like Linux or Mac
 
+#ifndef Q_OS_MACOS
             DelayedMimeData *mimeData = new DelayedMimeData(true, "extract-" % parWidget->getCurrentDoc()->GetDocName(), rangedata);
 
             //intptr_t p = reinterpret_cast<intptr_t>(rangedata);
@@ -67,7 +67,42 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
 
             drag->setPixmap(dragPixmap);
 
-            drag->exec();
+            drag->exec(Qt::CopyAction | Qt::LinkAction);
+#else
+            QMimeData* mimeData = new QMimeData();
+            QString fName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/extract-" + parWidget->getCurrentDoc()->GetDocName();
+
+            {
+                PdfUtil::PdfNewDocument newDoc(fName);
+                newDoc.addPagesFromRange(rangedata);
+                newDoc.Save();
+            }
+
+            pointersStream << RawPointer(rangedata);
+
+            mimeData->setData(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE, pointersData);
+
+            mimeData->setUrls(QList<QUrl>() << QUrl::fromLocalFile(fName));
+
+            drag->setMimeData(mimeData);
+
+            QPainter painter(&dragPixmap);
+
+            QPoint topLeft(0,0);
+            QPoint bottomRight(dragPixmap.size().width(), dragPixmap.size().height());
+            painter.setPen(Qt::black);
+
+            painter.drawLine(topLeft.x(), topLeft.y(), bottomRight.x() - 1, topLeft.y()); // Top border
+            painter.drawLine(bottomRight.x() - 1, topLeft.y(), bottomRight.x() - 1, bottomRight.y() - 1); // Right border
+            painter.drawLine(bottomRight.x() - 1, bottomRight.y() - 1, topLeft.x(), bottomRight.y() - 1); // Bottom border
+            painter.drawLine(topLeft.x(), bottomRight.y() - 1, topLeft.x(), topLeft.y()); // Left border
+
+            painter.end();
+
+            drag->setPixmap(dragPixmap);
+
+            drag->start(Qt::LinkAction | Qt::CopyAction);
+#endif
             return true;
         }
     }

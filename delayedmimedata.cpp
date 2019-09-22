@@ -26,7 +26,6 @@ QVariant DelayedMimeData::retrieveData(const QString &mimetype, QVariant::Type p
     if( mimetype == externlFormat && createdTempFile)
     {
         qDebug() << "retrieveData requested";
-
         return QVariant::fromValue<QUrl>( QUrl::fromLocalFile(tempFile) );
     }
     else

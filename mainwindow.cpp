@@ -281,6 +281,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 void MainWindow::dropEvent(QDropEvent *event)
 {
     auto urls = event->mimeData()->urls();
+    qDebug() << event->mimeData()->data("text/uri-list");
+    qDebug() << event->mimeData()->formats();
 
     try
     {
