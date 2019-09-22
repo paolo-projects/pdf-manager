@@ -9,8 +9,6 @@ You can find **Win32 (discontinued)** and **Win64** installers in the *releases*
 ##### Mac OSX
 A **Mac OSX 10.12+** release is provided in the *releases* section.
 
-The feature that allows you to drag selected pages from the page thumbnails area to your desktop is only working on windows atm.
-
 #### Linux
 On Linux you have to compile the software on your own. First get MuPDF library v1.16.0 and run:
 
