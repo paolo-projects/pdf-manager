@@ -11,10 +11,21 @@ A **Mac OSX 10.12+** release is provided in the *releases* section.
 
 The feature that allows you to drag selected pages from the page thumbnails area to your desktop is only working on windows atm.
 
+#### Linux
+On Linux you have to compile the software on your own. First get MuPDF library v1.16.0 and run:
+
+    make
+    sudo make install
+
+Then open the project dir and run:
+
+    qmake
+    make
+
 ### Compile
 To compile the software you need Qt (qmake or qtcreator).
 
-You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux you will probably find a compiled version in your package manager (make sure it's the same version *1.16.0* or higher) while on windows you have to compile it yourself, and then edit the .pro file accordingly to point to your lib and headers locations.
+You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux you can try to find a compiled version in your package manager (**make sure it's the version *1.16.0***), or get the source tarball which includes all the needed dependencies to compile and install. On windows you have to compile it yourself, and then edit the .pro file accordingly to point to your lib and headers locations.
 ```
 ...
 win32: {
