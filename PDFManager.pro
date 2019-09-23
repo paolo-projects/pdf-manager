@@ -24,60 +24,62 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11 static # add static if you built mupdf library statically (default behavior of the mupdf provided MSVC project)
 
+INCLUDEPATH = include
+
 SOURCES += \
-        aboutdialog.cpp \
-        customdraglistview.cpp \
-        customdragtreeview.cpp \
-        customselectionqlabel.cpp \
-        drageventfilter.cpp \
-        htmldelegate.cpp \
-        listnavigationeventfilter.cpp \
-        main.cpp \
-        mainwindow.cpp \
-        openeddocumentstreemodel.cpp \
-        pagegridwidget.cpp \
-        pdfmultiplepagesspecificator.cpp \
-        pdfnewdocument.cpp \
-        pdfpagecontinuousintervalspecificator.cpp \
-        pdfpixmappainter.cpp \
-        pdfrangesitemmodel.cpp \
-        pdfrenderedpage.cpp \
-        pdfsinglepagespecificator.cpp \
-        pdfutil.cpp \
-        treeitem.cpp
+        src/aboutdialog.cpp \
+        src/customdraglistview.cpp \
+        src/customdragtreeview.cpp \
+        src/customselectionqlabel.cpp \
+        src/drageventfilter.cpp \
+        src/htmldelegate.cpp \
+        src/listnavigationeventfilter.cpp \
+        src/main.cpp \
+        src/mainwindow.cpp \
+        src/openeddocumentstreemodel.cpp \
+        src/pagegridwidget.cpp \
+        src/pdfmultiplepagesspecificator.cpp \
+        src/pdfnewdocument.cpp \
+        src/pdfpagecontinuousintervalspecificator.cpp \
+        src/pdfpixmappainter.cpp \
+        src/pdfrangesitemmodel.cpp \
+        src/pdfrenderedpage.cpp \
+        src/pdfsinglepagespecificator.cpp \
+        src/pdfutil.cpp \
+        src/treeitem.cpp
 
 HEADERS += \
-        aboutdialog.h \
-        customdraglistview.h \
-        customdragtreeview.h \
-        customselectionqlabel.h \
-        delayedaction.h \
-        drageventfilter.h \
-        htmldelegate.h \
-        listnavigationeventfilter.h \
-        mainwindow.h \
-        openeddocumentstreemodel.h \
-        overlay.h \
-        pagegridwidget.h \
-        pdfexception.h \
-        pdfmultiplepagesspecificator.h \
-        pdfnewdocument.h \
-        pdfpagecontinuousintervalspecificator.h \
-        pdfpagerangespecificator.h \
-        pdfpixmappainter.h \
-        pdfrangesitemmodel.h \
-        pdfrenderedpage.h \
-        pdfsinglepagespecificator.h \
-        pdfutil.h \
-        progsettings.h \
-        qtooltipper.h \
-        rawpointer.h \
-        treeitem.h \
-        version.h
+      include/aboutdialog.h \
+      include/customdraglistview.h \
+      include/customdragtreeview.h \
+      include/customselectionqlabel.h \
+      include/delayedaction.h \
+      include/drageventfilter.h \
+      include/htmldelegate.h \
+      include/listnavigationeventfilter.h \
+      include/mainwindow.h \
+      include/openeddocumentstreemodel.h \
+      include/overlay.h \
+      include/pagegridwidget.h \
+      include/pdfexception.h \
+      include/pdfmultiplepagesspecificator.h \
+      include/pdfnewdocument.h \
+      include/pdfpagecontinuousintervalspecificator.h \
+      include/pdfpagerangespecificator.h \
+      include/pdfpixmappainter.h \
+      include/pdfrangesitemmodel.h \
+      include/pdfrenderedpage.h \
+      include/pdfsinglepagespecificator.h \
+      include/pdfutil.h \
+      include/progsettings.h \
+      include/qtooltipper.h \
+      include/rawpointer.h \
+      include/treeitem.h \
+      include/version.h
 
 FORMS += \
-        aboutdialog.ui \
-        mainwindow.ui
+        src/aboutdialog.ui \
+        src/mainwindow.ui
 
 win32: {
 MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
