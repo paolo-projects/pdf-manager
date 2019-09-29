@@ -29,6 +29,7 @@
 #include "htmldelegate.h"
 #include "qtooltipper.h"
 #include "pagegridwidget.h"
+#include "hintwidget.h"
 
 #include "aboutdialog.h"
 
@@ -76,6 +77,8 @@ private slots:
     void on_action_About_triggered();
 
     void pdfPagesArrowReceived(int key);
+
+    void newPagesItemDropped();
 private:
     Ui::MainWindow *ui;
     PdfRenderedPage* displayedPage = nullptr;
@@ -84,6 +87,8 @@ private:
     QList<PdfUtil*> loadedDocuments;
     QGraphicsPixmapItem pixItem;
     QProgressBar* progBar;
+
+    HintWidget *pdfDocsHint, *pdfPagesHint, *pdfRenderHint;
 
     //QStringListModel* pdfPageListModel;
     OpenedDocumentsTreeModel* pdfPageListModel;

@@ -45,6 +45,8 @@ private:
     const QFlags<Qt::ItemFlag> invalidItemFlags = QFlags<Qt::ItemFlag>{Qt::ItemIsDropEnabled, Qt::ItemIsEnabled};
     const QFlags<Qt::DropAction> supportedDrop_Actions = QFlags<Qt::DropAction>{Qt::CopyAction, Qt::MoveAction};
     const QFlags<Qt::DropAction> supportedDrag_Actions = QFlags<Qt::DropAction>{Qt::CopyAction, Qt::MoveAction};
+signals:
+    void itemDropped();
 };
 
 #endif // PDFRANGESITEMMODEL_H

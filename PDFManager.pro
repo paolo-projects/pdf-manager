@@ -55,6 +55,7 @@ HEADERS += \
       include/customselectionqlabel.h \
       include/delayedaction.h \
       include/drageventfilter.h \
+      include/hintwidget.h \
       include/htmldelegate.h \
       include/listnavigationeventfilter.h \
       include/mainwindow.h \

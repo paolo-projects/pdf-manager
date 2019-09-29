@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     pdfPageRangesListModel = new PdfRangesItemModel(pageRanges, this);
     ui->newPagesList->setModel(pdfPageRangesListModel);
+    connect(pdfPageRangesListModel, SIGNAL(itemDropped()), this, SLOT(newPagesItemDropped()));
 
     ui->pdfPagesList->setDragEnabled(true);
     ui->pdfPagesList->setDragDropMode(QAbstractItemView::DragOnly);
@@ -72,6 +73,33 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pageRangeFirstTxt, SIGNAL(returnPressed()), ui->addPageRangeBtn, SIGNAL(clicked()));
     connect(ui->multiplePagesTxt, SIGNAL(returnPressed()), ui->addMultiplePagesBtn, SIGNAL(clicked()));
 
+    pdfDocsHint = new HintWidget("Drop a PDF here to open it");
+    pdfPagesHint = new HintWidget("Drop pages here or add them through the left controls");
+    pdfRenderHint = new HintWidget("Click on an open document to show a preview of its pages");
+
+    QFont hintFont;
+    hintFont.setBold(true);
+    hintFont.setPointSize(10);
+
+    pdfDocsHint->setFont(hintFont);
+    pdfPagesHint->setFont(hintFont);
+    pdfRenderHint->setFont(hintFont);
+
+    pdfRenderHint->setColor(QColor::fromRgb(0xde, 0xde, 0xde));
+
+    pdfDocsHint->setParent(ui->pdfPagesList);
+    pdfDocsHint->resize(ui->pdfPagesList->size());
+
+    pdfPagesHint->setParent(ui->newPagesList);
+    pdfPagesHint->resize(ui->newPagesList->size());
+
+    pdfRenderHint->setParent(ui->pdfRenderingView);
+    pdfRenderHint->resize(ui->pdfRenderingView->size());
+
+    ui->pdfPagesList->installEventFilter(new HintWidgetFactoryFilter(pdfDocsHint));
+    ui->newPagesList->installEventFilter(new HintWidgetFactoryFilter(pdfPagesHint));
+    ui->pdfRenderingView->installEventFilter(new HintWidgetFactoryFilter(pdfRenderHint));
+
     setAcceptDrops(true);
 }
 
@@ -111,6 +139,8 @@ void MainWindow::on_action_Load_PDF_triggered()
             completeProgressBar();
 
             addPdfPageList(loadedDocuments.last());
+
+            pdfDocsHint->setVisible(false);
             /*if(pageRanges.size() > 0)
                 pdfPageRangesListModel->removeRows(0, pdfPageListModel->rowCount());*/
         } catch (const PdfException& exception)
@@ -303,6 +333,7 @@ void MainWindow::dropEvent(QDropEvent *event)
         }
 
         ui->statusBar->showMessage(QString::number(pdfFiles)+" PDF files loaded.");
+        pdfDocsHint->setVisible(false);
     } catch (const PdfException& exception)
     {
         completeProgressBar(true);
@@ -332,9 +363,12 @@ void MainWindow::on_pdfPagesList_clicked(const QModelIndex &index)
             ui->pdfRenderingView->displayDocPages(loadedDocuments.at(parent));
 
         ui->pdfRenderingView->navigateToPage(page);
+
+        pdfRenderHint->setVisible(false);
     } else {
         parent = index.row();
         ui->pdfRenderingView->displayDocPages(loadedDocuments.at(parent));
+        pdfRenderHint->setVisible(false);
     }
     //setCurrentlyDisplayedPage(page, parent);
 
@@ -360,6 +394,7 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                 {
                     auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                     pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                    pdfPagesHint->setVisible(false);
                 }
             }
         }
@@ -380,6 +415,7 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                     {
                         auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                         pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                        pdfPagesHint->setVisible(false);
                     }
                 }
             } else {
@@ -398,6 +434,7 @@ void MainWindow::pdfPagesContextMenu(const QPoint &point)
                     {
                         auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                         pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                        pdfPagesHint->setVisible(false);
                     }
                 } else if (res == action_deleteSelection)
                 {
@@ -490,6 +527,7 @@ void MainWindow::on_addSinglePageBtn_clicked()
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                 pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                pdfPagesHint->setVisible(false);
             }
         }
     }
@@ -513,6 +551,7 @@ void MainWindow::on_addPageRangeBtn_clicked()
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                 pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                pdfPagesHint->setVisible(false);
             }
         }
     }
@@ -536,6 +575,7 @@ void MainWindow::on_addMultiplePagesBtn_clicked()
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                 pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                pdfPagesHint->setVisible(false);
             }
         }
     }
@@ -602,6 +642,7 @@ void MainWindow::on_action_Add_all_triggered()
             {
                 auto index = pdfPageRangesListModel->index(pdfPageRangesListModel->rowCount()-1);
                 pdfPageRangesListModel->setData(index, QVariant::fromValue<PdfPageRangeSpecificator*>(newItem));
+                pdfPagesHint->setVisible(false);
             }
         }
     }
@@ -677,4 +718,9 @@ void MainWindow::pdfPagesArrowReceived(int key)
         }
         break;
     }*/
+}
+
+void MainWindow::newPagesItemDropped()
+{
+    pdfPagesHint->setVisible(false);
 }

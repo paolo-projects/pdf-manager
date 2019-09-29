@@ -157,7 +157,7 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
                 moveRows(QModelIndex(), startingRow, list.size(), QModelIndex(), rowPosition);
             }
             return true;
-        } else if (startingRow == -1)//action == Qt::CopyAction)
+        } else if (startingRow == -1)
         {
             // Copy from QTreeView
             QList<intptr_t> list;
@@ -179,6 +179,8 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
                     auto t_item = index(rowPosition + i);
                     setData(t_item, QVariant::fromValue<PdfPageRangeSpecificator*>(reinterpret_cast<PdfPageRangeSpecificator*>(list.at(i))));
                 }
+
+                emit itemDropped();
             }
             return true;
         } else return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
