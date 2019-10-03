@@ -44,7 +44,7 @@ bool DragEventFilter::eventFilter(QObject *object, QEvent *event)
 
             // This code allows dropping the pages directly to OS filesystem, allowing a quick creation of pdf with small subsets of pages
             QMimeData* mimeData = new QMimeData();
-            QString fName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/extract-" + parWidget->getCurrentDoc()->GetDocName();
+            QString fName = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" + tr("extract") + "-" + parWidget->getCurrentDoc()->GetDocName();
 
             {
                 PdfUtil::PdfNewDocument newDoc(fName);

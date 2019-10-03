@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QDataStream>
 #include <QStandardPaths>
+#include <QPointer>
 
 #include "pdfmultiplepagesspecificator.h"
 #include "pdfpixmappainter.h"
@@ -20,7 +21,7 @@ public:
     bool eventFilter(QObject* object, QEvent* event);
 
 private:
-    PageGridWidget* parWidget;
+    QPointer<PageGridWidget> parWidget;
 };
 
 #endif // DRAGEVENTFILTER_H

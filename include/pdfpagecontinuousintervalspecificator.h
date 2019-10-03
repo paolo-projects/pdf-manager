@@ -7,6 +7,7 @@
 #include <QList>
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
+#include <QPointer>
 
 class PdfPageContinuousIntervalSpecificator : public PdfPageRangeSpecificator
 {
@@ -26,7 +27,7 @@ private:
     QRegularExpression regxp = QRegularExpression("^(\\d+)\\-(\\d+)$");
 
     QString docPath;
-    PdfUtil* doc;
+    QPointer<PdfUtil> doc;
 };
 
 #endif // PDFPAGECONTINUOUSINTERVALSPECIFICATOR_H

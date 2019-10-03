@@ -11,9 +11,9 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include <QTimer>
-#include <QGLWidget>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QPointer>
 
 #include "pdfutil.h"
 #include "pdfpagerangespecificator.h"
@@ -81,22 +81,17 @@ private slots:
     void newPagesItemDropped();
 private:
     Ui::MainWindow *ui;
-    PdfRenderedPage* displayedPage = nullptr;
-    QImage* displayedImage = nullptr;
-    QGraphicsScene* grScene = nullptr;
     QList<PdfUtil*> loadedDocuments;
-    QGraphicsPixmapItem pixItem;
-    QProgressBar* progBar;
+    QScopedPointer<QProgressBar> progBar;
 
-    HintWidget *pdfDocsHint, *pdfPagesHint, *pdfRenderHint;
+    QScopedPointer<HintWidget> pdfDocsHint, pdfPagesHint, pdfRenderHint;
 
-    //QStringListModel* pdfPageListModel;
-    OpenedDocumentsTreeModel* pdfPageListModel;
+    QScopedPointer<OpenedDocumentsTreeModel> pdfPageListModel;
 
     QList<PdfPageRangeSpecificator*> pageRanges;
-    PdfRangesItemModel* pdfPageRangesListModel;
+    QScopedPointer<PdfRangesItemModel> pdfPageRangesListModel;
 
-    QTimer* timer = nullptr;
+    QScopedPointer<QTimer> timer;
 
     QString defaultProgBarFormat;
     QString errorProgBarFormat =  "QProgressBar {"
@@ -107,8 +102,6 @@ private:
                                   "background-color: #FF0000;"
                                   "}";
 
-    void setCurrentlyDisplayedPage(int pageNum, int docIndex);
-    void updatePdfPageList();
     void addPdfPageList(PdfUtil* doc);
     void resizeEvent(QResizeEvent* event) override;
 

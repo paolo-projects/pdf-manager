@@ -3,6 +3,7 @@
 
 #include <QListView>
 #include <QDrag>
+#include <QPointer>
 
 #include "pdfpixmappainter.h"
 #include "pdfpagerangespecificator.h"
@@ -18,7 +19,7 @@ protected:
     void startDrag(Qt::DropActions supportedActions) override;
 
 private:
-    QList<PdfUtil*>* currentlyLoadedDocuments = nullptr;
+    QList<PdfUtil*>* currentlyLoadedDocuments;
 };
 
 #endif // CUSTOMDRAGLISTVIEW_H

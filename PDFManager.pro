@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui opengl
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++11 static # add static if you built mupdf library statically (default behavior of the mupdf provided MSVC project)
+CONFIG += c++11 dynamic # add static if you built mupdf library statically (default behavior of the mupdf provided MSVC project)
 
 INCLUDEPATH = include
 
@@ -45,8 +45,7 @@ SOURCES += \
         src/pdfrangesitemmodel.cpp \
         src/pdfrenderedpage.cpp \
         src/pdfsinglepagespecificator.cpp \
-        src/pdfutil.cpp \
-        src/treeitem.cpp
+        src/pdfutil.cpp
 
 HEADERS += \
       include/aboutdialog.h \
@@ -75,19 +74,18 @@ HEADERS += \
       include/progsettings.h \
       include/qtooltipper.h \
       include/rawpointer.h \
-      include/treeitem.h \
       include/version.h
 
 FORMS += \
         src/aboutdialog.ui \
         src/mainwindow.ui
 
-win32: {
-MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
+win32 {
+    MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
 
-INCLUDEPATH += $$MUPDFPATH\include
+    INCLUDEPATH += $$MUPDFPATH\include
 
-!contains(QMAKE_TARGET.arch, x86_64) {
+    !contains(QMAKE_TARGET.arch, x86_64) {
         message("x86 build")
 
         ## Windows x86 (32bit) specific build here
@@ -101,12 +99,18 @@ INCLUDEPATH += $$MUPDFPATH\include
     }
 
     LIBS += -llibmupdf
-} else {
+} else:unix:!android {
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lmupdf -lmupdf-third
+} else:unix:android {
+    MUPDFPATH = C:\mupdf-1.16.0-source #Edit this path with the path to your build mupdf library
+
+    INCLUDEPATH += $$MUPDFPATH\include
+    LIBS += -L$$MUPDFPATH\build\release
+    LIBS += -lmupdf -lmupdf-third
 }
 
-macx: {
+macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
     ICON = appicon.icns
 }

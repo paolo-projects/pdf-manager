@@ -20,6 +20,7 @@
 #include <QItemSelectionModel>
 #include <QRubberBand>
 #include <QScrollBar>
+#include <QPointer>
 
 #include "pdfutil.h"
 #include "pdfrenderedpage.h"
@@ -51,18 +52,18 @@ public slots:
     void onScrollbarChange(int value);
     void onTimerEnd(int);
 private:
-    QScrollArea* scrollArea;
-    QWidget* scrollAreaWidget;
-    QGridLayout* gridLayout;
+    QScopedPointer<QScrollArea> scrollArea;
+    QScopedPointer<QWidget> scrollAreaWidget;
+    QScopedPointer<QGridLayout> gridLayout;
     QList<CustomSelectionQLabel*> displayedPictures;
-    QVBoxLayout* mainLayout;
+    QScopedPointer<QVBoxLayout> mainLayout;
 
     int itemWidth, itemHeight;
 
     int columnsPerRow = 3;
 
     QList<QPixmap> loadedPixmaps;
-    PdfUtil* currDoc;
+    QPointer<PdfUtil> currDoc;
     QVector<bool> renderedPages;
 
     bool selectable = true;
@@ -88,7 +89,7 @@ private:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-    DragEventFilter* dragEventFilter;
+    QScopedPointer<DragEventFilter> dragEventFilter;
 
     // QWidget interface
 protected:

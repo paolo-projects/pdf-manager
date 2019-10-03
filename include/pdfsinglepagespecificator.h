@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QList>
+#include <QPointer>
 
 #include "pdfpagerangespecificator.h"
 
@@ -23,7 +24,7 @@ private:
     int page;
 
     QString docPath;
-    PdfUtil* doc;
+    QPointer<PdfUtil> doc;
 };
 
 #endif // PDFSINGLEPAGESPECIFICATOR_H

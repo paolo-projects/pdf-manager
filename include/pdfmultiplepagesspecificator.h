@@ -8,6 +8,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
 #include <QRegularExpressionMatchIterator>
+#include <QPointer>
 
 class PdfMultiplePagesSpecificator : public PdfPageRangeSpecificator
 {
@@ -28,7 +29,7 @@ private:
     QRegularExpression regxp = QRegularExpression("(\\d+),?");
 
     QString docPath;
-    PdfUtil* doc;
+    QPointer<PdfUtil> doc;
 };
 
 #endif // PDFMULTIPLEPAGESSPECIFICATOR_H

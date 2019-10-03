@@ -2,33 +2,34 @@
 
 PageGridWidget::PageGridWidget(QWidget *parent) : QWidget(parent), currentRubberBand(QRubberBand::Rectangle, this)
 {
-    mainLayout = new QVBoxLayout();
+    mainLayout.reset(new QVBoxLayout());
 
-    dragEventFilter = new DragEventFilter(this);
+    dragEventFilter.reset(new DragEventFilter(this));
 
-    scrollArea = new QScrollArea();
+    scrollArea.reset(new QScrollArea());
     /*scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     scrollArea->setVerticalScrollBarPolicy( Qt::ScrollBarAsNeeded);*/
 
     scrollArea->setBackgroundRole(QPalette::Dark);
-    scrollAreaWidget = new QFrame();
-    gridLayout = new QGridLayout();
-    scrollAreaWidget->setLayout(gridLayout);
-    scrollArea->setWidget(scrollAreaWidget);
+    scrollAreaWidget.reset(new QFrame());
+    gridLayout.reset(new QGridLayout());
+    scrollAreaWidget->setLayout(gridLayout.data());
+    scrollArea->setWidget(scrollAreaWidget.data());
 
-    mainLayout->addWidget(scrollArea);
+    mainLayout->addWidget(scrollArea.data());
 
-    setLayout(mainLayout);
+    setLayout(mainLayout.data());
 
     connect(reinterpret_cast<QAbstractSlider*>(scrollArea->verticalScrollBar()), SIGNAL(valueChanged(int)), this, SLOT(onScrollbarChange(int)));
 }
 
 PageGridWidget::~PageGridWidget()
 {
-    delete gridLayout;
+    removeAllWidgets();
+    /*delete gridLayout;
     delete scrollAreaWidget;
     delete scrollArea;
-    delete mainLayout;
+    delete mainLayout;*/
 }
 
 void PageGridWidget::displayDocPages(PdfUtil *doc)
@@ -45,7 +46,7 @@ void PageGridWidget::displayDocPages(PdfUtil *doc)
 
         pic->setText(QString::number(page+1));
 
-        pic->installEventFilter(dragEventFilter);
+        pic->installEventFilter(dragEventFilter.data());
 
         //delete pageImage;
         displayedPictures.append(pic);

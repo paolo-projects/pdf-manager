@@ -11,8 +11,9 @@
 #include "pdfrenderedpage.h"
 #include "pdfexception.h"
 
-class PdfUtil
+class PdfUtil : public QObject
 {
+    Q_OBJECT
 public:
     PdfUtil(QString path);
     ~PdfUtil();

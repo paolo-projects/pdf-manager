@@ -5,10 +5,10 @@
 #include <QDrag>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QPointer>
 
 #include "pdfpixmappainter.h"
 #include "pdfpagerangespecificator.h"
-#include "treeitem.h"
 
 class CustomDragTreeView : public QTreeView
 {

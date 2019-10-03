@@ -4,6 +4,10 @@ PdfUtil::PdfNewDocument::PdfNewDocument(QString fileName)
     :
       fileName(fileName)
 {
+    QFile newFile(fileName);
+    if(newFile.exists())
+        newFile.remove();
+
     ctx = fz_new_context(nullptr, nullptr, FZ_STORE_UNLIMITED);
     if(!ctx)
         throw PdfException("Failed to create context.");

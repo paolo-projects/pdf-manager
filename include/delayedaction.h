@@ -5,15 +5,19 @@
 #include <QObject>
 #include <QVariant>
 
+/**
+ * @brief The DelayedAction class is used to schedule a delayed action.
+ * It's a kamikaze class, so it will auto-delete after emitting the delayEnd signal.
+ */
 class DelayedAction : public QObject
 {
     Q_OBJECT
 public:
     DelayedAction(int data) : data(data)
     {
-        timer = new QTimer();
+        timer.reset(new QTimer());
         timer->setSingleShot(true);
-        connect(timer, SIGNAL(timeout()), this, SLOT(timerEnd()));
+        connect(timer.data(), SIGNAL(timeout()), this, SLOT(timerEnd()));
     }
     void start(int delayMs)
     {
@@ -26,11 +30,10 @@ private slots:
     void timerEnd()
     {
         emit delayEnd(data);
-        delete timer;
         delete this;
     }
 private:
-    QTimer* timer;
+    QScopedPointer<QTimer> timer;
     int data;
 };
 

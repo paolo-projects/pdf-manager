@@ -103,18 +103,14 @@ bool PdfRangesItemModel::removeRows(int position, int rows, const QModelIndex &p
 }
 
 bool PdfRangesItemModel::moveRows(const QModelIndex &sourceParent, int sourceRow, int count, const QModelIndex &destinationParent, int destinationChild)
-{ //TODO: fix move rows
-    beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild);
-
-//    QList<int> removeIndexes;
+{
+    if(!beginMoveRows(QModelIndex(), sourceRow, sourceRow + count - 1, QModelIndex(), destinationChild))
+        return false;
 
     for(int i = destinationChild; i<(destinationChild+count); ++i) {
         items.insert(i, items[sourceRow + i - destinationChild]);
-//        removeIndexes << (destinationChild > sourceRow ? sourceRow : sourceRow+count);
     }
 
-//    for(auto index : removeIndexes)
-//        items.removeAt(index);
     int deltaCount = (destinationChild < sourceRow) ? count : 0;
     for(int i = sourceRow + deltaCount; i < (sourceRow + count + deltaCount); i++)
         items.removeAt(i);

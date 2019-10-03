@@ -5,7 +5,6 @@
 #include <QMimeData>
 
 #include "pdfutil.h"
-#include "treeitem.h"
 #include "progsettings.h"
 
 #include "pdfpagerangespecificator.h"
@@ -22,7 +21,6 @@ public:
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
 private:
     QList<PdfUtil*>& openedDocuments;
-    TreeItem *rootItem;
     const QStringList defMimeTypes = QStringList{SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE};
     // QAbstractItemModel interface
 public:
