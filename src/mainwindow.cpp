@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->multiplePagesTxt, SIGNAL(returnPressed()), ui->addMultiplePagesBtn, SIGNAL(clicked()));
 
     pdfDocsHint.reset(new HintWidget(tr("1. Drop a PDF here to open it")));
-    pdfPagesHint.reset(new HintWidget(tr("3. Drag pages from the list or from the thumbnails and drop them here")));
+    pdfPagesHint.reset(new HintWidget(tr("3. Drop selected document pages or image files here")));
     pdfRenderHint.reset(new HintWidget(tr("2. Click on an open document to show a preview of its pages")));
 
     QFont hintFont;
@@ -234,8 +234,6 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 void MainWindow::dropEvent(QDropEvent *event)
 {
     auto urls = event->mimeData()->urls();
-    qDebug() << event->mimeData()->data("text/uri-list");
-    qDebug() << event->mimeData()->formats();
 
     try
     {
@@ -490,7 +488,7 @@ void MainWindow::on_addMultiplePagesBtn_clicked()
 
 void MainWindow::on_action_Export_PDF_triggered()
 {
-    if(loadedDocuments.size() > 0 && pageRanges.length() > 0)
+    if(pageRanges.length() > 0)
     {
         QString fileName = QFileDialog::getSaveFileName(this, tr("Output file"), "", tr("PDF File") + " (*.pdf)");
         if(!fileName.isEmpty() && !fileName.isNull())
@@ -505,7 +503,10 @@ void MainWindow::on_action_Export_PDF_triggered()
 
                 for(auto pageRange : pageRanges)
                 {
-                    newDoc.addPagesFromRange(pageRange);
+                    if(pageRange->isImage())
+                        newDoc.addPageFromImage(pageRange->getDocumentPath());
+                    else
+                        newDoc.addPagesFromRange(pageRange);
                     incrementProgressBar();
                 }
 

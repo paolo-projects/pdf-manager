@@ -36,3 +36,8 @@ PdfUtil *PdfSinglePageSpecificator::getDocument() const
 {
     return doc;
 }
+
+bool PdfSinglePageSpecificator::isImage() const
+{
+    return false;
+}

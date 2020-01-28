@@ -21,6 +21,7 @@ public:
 
     QString getDocumentPath() const override;
     PdfUtil* getDocument() const override;
+    bool isImage() const override;
 
 private:
     int lowerPage, higherPage;

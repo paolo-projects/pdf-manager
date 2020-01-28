@@ -38,6 +38,7 @@ SOURCES += \
         src/mainwindow.cpp \
         src/openeddocumentstreemodel.cpp \
         src/pagegridwidget.cpp \
+        src/pdfimagepagespecificator.cpp \
         src/pdfmultiplepagesspecificator.cpp \
         src/pdfnewdocument.cpp \
         src/pdfpagecontinuousintervalspecificator.cpp \
@@ -62,6 +63,7 @@ HEADERS += \
       include/overlay.h \
       include/pagegridwidget.h \
       include/pdfexception.h \
+      include/pdfimagepagespecificator.h \
       include/pdfmultiplepagesspecificator.h \
       include/pdfnewdocument.h \
       include/pdfpagecontinuousintervalspecificator.h \

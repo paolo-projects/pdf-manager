@@ -16,6 +16,7 @@ class PdfUtil::PdfNewDocument
         PdfNewDocument(QString fileName);
         ~PdfNewDocument();
         void addPagesFromRange(PdfPageRangeSpecificator* range);
+        void addPageFromImage(QString image_path);
         void Save();
     private:
         QString fileName;
@@ -27,8 +28,11 @@ class PdfUtil::PdfNewDocument
 
         bool localContext = false;
         int addedPages = 0;
+        int imgcounter = 0;
 
         void addPageFromParent(pdf_document* doc_src, int pageNum);
+        static constexpr int A4_w = 595;
+        static constexpr int A4_h = 842;
 };
 #endif // PDFNEWDOCUMENT_H
 

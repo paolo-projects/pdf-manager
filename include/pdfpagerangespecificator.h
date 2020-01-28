@@ -15,6 +15,7 @@ public:
     operator QList<int>() const { return getAllPages(); }
     virtual QString getDocumentPath() const = 0;
     virtual PdfUtil* getDocument() const = 0;
+    virtual bool isImage() const = 0;
 };
 
 Q_DECLARE_METATYPE(PdfPageRangeSpecificator*)

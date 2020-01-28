@@ -79,6 +79,7 @@ private slots:
     void pdfPagesArrowReceived(int key);
 
     void newPagesItemDropped();
+
 private:
     Ui::MainWindow *ui;
     QList<PdfUtil*> loadedDocuments;

@@ -33,11 +33,15 @@ QVariant PdfRangesItemModel::data(const QModelIndex &index, int role) const
     Q_ASSERT(checkIndex(index, QAbstractItemModel::CheckIndexOption::IndexIsValid | QAbstractItemModel::CheckIndexOption::ParentIsInvalid));
 
     if (role == Qt::DisplayRole)
-        return QString("<b>%1</b><br/><i>%2</i>").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
+        return  items.at(index.row())->isImage() ?
+                    QString("<b>%1</b>").arg(items.at(index.row())->getDisplayText()) :
+                    QString("<b>%1</b><br/><i>%2</i>").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
     else if (role == Qt::EditRole)
         return QVariant::fromValue<PdfPageRangeSpecificator*>(items.at(index.row()));
     else if (role == Qt::ToolTipRole)
-        return QString("%1 (%2)").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
+        return items.at(index.row())->isImage() ?
+                    QString("<b>%1</b>").arg(items.at(index.row())->getDisplayText()) :
+                    QString("<b>%1</b><br/><i>%2</i>").arg(items.at(index.row())->getDisplayText(), items.at(index.row())->getDocument()->GetDocName());
     else
         return QVariant();
 }
@@ -181,12 +185,30 @@ bool PdfRangesItemModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
             return true;
         } else return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
     }
+    else if(SETTINGS::isUriListImage(data))
+    {
+        int rowPosition = parent.isValid() ? row+1 : row;
+        rowPosition = (rowPosition == -1) ? rowCount() : rowPosition;
+
+        insertRows(rowPosition, data->urls().size());
+
+        for(int i = 0; i < data->urls().size(); i++)
+        {
+            auto t_item = index(rowPosition + i);
+            setData(t_item, QVariant::fromValue<PdfPageRangeSpecificator*>(reinterpret_cast<PdfPageRangeSpecificator*>(new PdfImagePageSpecificator(data->urls().at(i).toLocalFile()))));
+        }
+
+        emit itemDropped();
+    }
     else return QAbstractItemModel::dropMimeData(data, action, row, column, parent);
 }
 
 bool PdfRangesItemModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const
 {
+    qDebug() << "Receiving mime: " << data->formats() << ", data: " << data->text() << "\n";
     if(data->hasFormat(SETTINGS::PDFPAGERANGESPECIFICATOR_P_MIME_TYPE))
+        return true;
+    else if(SETTINGS::isUriListImage(data))
         return true;
 
     return QAbstractItemModel::canDropMimeData(data, action, row, column, parent);

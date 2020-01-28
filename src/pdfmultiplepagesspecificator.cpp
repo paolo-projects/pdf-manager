@@ -57,3 +57,8 @@ PdfUtil *PdfMultiplePagesSpecificator::getDocument() const
 {
     return doc;
 }
+
+bool PdfMultiplePagesSpecificator::isImage() const
+{
+    return false;
+}

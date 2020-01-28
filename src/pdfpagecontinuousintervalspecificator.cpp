@@ -60,3 +60,8 @@ PdfUtil *PdfPageContinuousIntervalSpecificator::getDocument() const
 {
     return doc;
 }
+
+bool PdfPageContinuousIntervalSpecificator::isImage() const
+{
+    return false;
+}

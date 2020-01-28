@@ -17,6 +17,7 @@ PdfUtil::PdfNewDocument::PdfNewDocument(QString fileName)
     fz_try(ctx)
     {
         doc_des = pdf_create_document(ctx);
+
     }
     fz_catch(ctx)
     {
@@ -102,6 +103,106 @@ void PdfUtil::PdfNewDocument::addPageFromParent(pdf_document* doc_src, int pageN
     fz_catch(ctx)
     {
         throw PdfException("Can't add page "+QString::number(pageNum)+" to PDF file.");
+    }
+}
+
+void PdfUtil::PdfNewDocument::addPageFromImage(QString image_path)
+{
+    if(image_path.length() > 0)
+    {
+        fz_try(ctx)
+        {
+            const char* pdfpageimg_templ = " q %g %g %g %g %g %g cm /%s Do Q ";
+            std::string _imgname = "imgObj" + std::to_string(imgcounter);
+
+            fz_image* img = fz_new_image_from_file(ctx, image_path.toStdString().c_str());
+            fz_pixmap* pixm = fz_get_pixmap_from_image(ctx, img, NULL, NULL, 0, 0);
+
+            if(pixm->alpha == 1)
+            {
+                fz_color_params color_params = {0};
+                fz_pixmap* pm = fz_convert_pixmap(ctx, pixm, NULL, NULL, NULL, color_params, 1);
+                pm->alpha = 0;
+                pm->colorspace = fz_keep_colorspace(ctx, fz_device_gray(ctx));
+                fz_image* mask = fz_new_image_from_pixmap(ctx, pm, NULL);
+                fz_image* zimg = fz_new_image_from_pixmap(ctx, pixm, mask);
+                fz_drop_image(ctx, img);
+                img = zimg;
+                zimg = NULL;
+            }
+
+            pdf_obj* img_obj = pdf_add_image(ctx, doc_des, img);
+
+            pdf_obj* page_resx = pdf_add_object_drop(ctx, doc_des, pdf_new_dict(ctx, doc_des, 1));
+            fz_buffer* nres = fz_new_buffer(ctx, 50);
+
+            fz_rect mediabox = fz_make_rect(0, 0, img->w, img->h);
+
+            auto new_page = pdf_add_page(ctx, doc_des, mediabox, 0, page_resx, nres);
+                    //pdf_new_dict(ctx, doc_des, 4);
+
+            //pdf_page_transform(ctx, new_page, mdbox, mtx);
+
+            pdf_dict_put(ctx, new_page, PDF_NAME(Type), PDF_NAME(Page));
+
+           //auto page_resx = pdf_dict_get_inheritable(ctx, new_page, PDF_NAME(Resources));
+            auto page_xobjs = pdf_dict_get(ctx, page_resx, PDF_NAME(XObject));
+            if(!page_xobjs)
+            {
+                page_xobjs = pdf_new_dict(ctx, doc_des, 10);
+                pdf_dict_putl_drop(ctx, new_page, page_xobjs, PDF_NAME(Resources), PDF_NAME(XObject), NULL);
+            }
+
+            pdf_dict_puts(ctx, page_xobjs, _imgname.c_str(), img_obj);
+
+            fz_matrix mat = fz_make_matrix(img->w, 0.0f, 0.0f, img->h/*434.33235*/, 0.0f, 0/*255.83383*/);
+
+            fz_append_printf(ctx, nres, pdfpageimg_templ, mat.a, mat.b, mat.c, mat.d, mat.e, mat.f,
+                             _imgname.c_str());
+
+            pdf_obj* contents = pdf_dict_get(ctx, new_page, PDF_NAME(Contents));
+            pdf_obj* newconts = pdf_add_stream(ctx, doc_des, nres, NULL, 0);
+
+            int overlay = 1;
+
+            if (pdf_is_array(ctx, contents))
+            {
+                if (overlay)               // append new object
+                    pdf_array_push_drop(ctx, contents, newconts);
+                else                       // prepend new object
+                    pdf_array_insert_drop(ctx, contents, newconts, 0);
+            }
+            else                           // make new array
+            {
+                pdf_obj *carr = pdf_new_array(ctx, doc_des, 5);
+                if (overlay)
+                {
+                    if (contents) pdf_array_push(ctx, carr, contents);
+                    pdf_array_push_drop(ctx, carr, newconts);
+                }
+                else
+                {
+                    pdf_array_push_drop(ctx, carr, newconts);
+                    if (contents) pdf_array_push(ctx, carr, contents);
+                }
+                pdf_dict_put_drop(ctx, new_page, PDF_NAME(Contents), carr);
+            }
+
+            doc_des->dirty = 1;
+
+            pdf_insert_page(ctx, doc_des, addedPages, new_page);
+
+            fz_drop_buffer(ctx, nres);
+
+            fz_drop_image(ctx, img);
+
+            addedPages++;
+            imgcounter++;
+        }
+        fz_catch(ctx)
+        {
+            throw PdfException("Can't add image "+image_path+" to PDF File.");
+        }
     }
 }
 

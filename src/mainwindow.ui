@@ -119,8 +119,27 @@
         <item row="1" column="2">
          <widget class="QWidget" name="widget_4" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
            <item>
-            <widget class="QLineEdit" name="pageRangeFirstTxt"/>
+            <widget class="QLineEdit" name="pageRangeFirstTxt">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLabel" name="label_3">
@@ -130,7 +149,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="pageRangeLastTxt"/>
+            <widget class="QLineEdit" name="pageRangeLastTxt">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -143,7 +169,14 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLineEdit" name="singlePageTxt"/>
+         <widget class="QLineEdit" name="singlePageTxt">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
         </item>
         <item row="1" column="1">
          <widget class="QPushButton" name="addSinglePageBtn">
@@ -187,7 +220,14 @@
          </widget>
         </item>
         <item row="8" column="0" colspan="3">
-         <widget class="QLineEdit" name="multiplePagesTxt"/>
+         <widget class="QLineEdit" name="multiplePagesTxt">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -201,7 +241,7 @@
      <x>0</x>
      <y>0</y>
      <width>848</width>
-     <height>26</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

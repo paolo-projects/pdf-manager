@@ -10,6 +10,7 @@
 #include "pdfpagerangespecificator.h"
 #include "pdfpagecontinuousintervalspecificator.h"
 #include "pdfsinglepagespecificator.h"
+#include "pdfimagepagespecificator.h"
 #include "progsettings.h"
 #include "rawpointer.h"
 
