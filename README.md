@@ -1,6 +1,6 @@
 # PDF Manager
 
-![GitHub Releases](https://img.shields.io/github/downloads/paolo-projects/pdf-manager/latest/total?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paolo-projects/pdf-manager?style=flat-square) [![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman)
+![GitHub Releases](https://img.shields.io/github/downloads/paolo-projects/pdf-manager/latest/total?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paolo-projects/pdf-manager?style=flat-square) [![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman) ![GitHub](https://img.shields.io/github/license/paolo-projects/pdf-manager?style=flat-square)
 
 An open source cross-platform Qt application to manipulate PDF files.
 Most notable features are:
