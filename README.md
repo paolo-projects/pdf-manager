@@ -4,26 +4,28 @@ An open source cross-platform Qt application to extract pages from a PDF file an
 
 ### Releases
 ##### Windows
-You can find **Win32 (discontinued)** and **Win64** installers in the *releases* section.
+You can find **Win64** installers in the *releases* section (and a 32 bit release of an old version).
 
 ##### Mac OSX
 A **Mac OSX 10.12+** release is provided in the *releases* section.
 
 #### Linux
-On Linux you have to compile the software on your own. First get MuPDF library v1.16.0 and run:
+On Linux you have to compile the software on your own. Follow the instructions below.
+
+### Compile
+To compile the software you need Qt (qmake or qtcreator). A copy of the source code can be found here: [https://github.com/qt/qtbase](https://github.com/qt/qtbase), or you can get an installer for the open-source edition at [https://www.qt.io/download-open-source](https://www.qt.io/download-open-source).
+
+You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux and MacOS you can simply get the source tarball from the previous link which includes all the needed dependencies to compile and install (**make sure it's the version *1.16.0***), then extract, get into the directory and run:
 
     make
     sudo make install
 
-Then open the project dir and run:
+And finally open the project dir and run:
 
     qmake
     make
 
-### Compile
-To compile the software you need Qt (qmake or qtcreator).
-
-You also need to compile or get the [muPdf](https://www.mupdf.com/downloads/index.html) library, needed to open/create/render PDF files. On Linux you can try to find a compiled version in your package manager (**make sure it's the version *1.16.0***), or get the source tarball which includes all the needed dependencies to compile and install. On windows you have to compile it yourself, and then edit the .pro file accordingly to point to your lib and headers locations.
+On windows you have to compile it yourself, and edit the .pro file accordingly to point to your lib and headers locations.
 ```
 ...
 win32: {
@@ -46,7 +48,7 @@ INCLUDEPATH += $$MUPDFPATH\include
 }
 ...
 ```
-
+It's easier, when compiling, to use the Qt Creator tool to make sure all the paths are retrieved correctly.
 ### License
 The software is provided under GNU AGPL v3.0. See the LICENSE file for more info.
 
