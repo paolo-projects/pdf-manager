@@ -1,6 +1,15 @@
 # PDF Manager
 
-An open source cross-platform Qt application to extract pages from a PDF file and save them to another one.
+![GitHub Releases](https://img.shields.io/github/downloads/paolo-projects/pdf-manager/latest/total?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paolo-projects/pdf-manager?style=flat-square) [![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman)
+
+An open source cross-platform Qt application to manipulate PDF files.
+Most notable features are:
+
+* extract individual pages, intervals, or multiple selection from PDF files and merge them into a new one
+* extract from multiple PDFs at the same time
+* drop raw image files into a PDF file
+* easy and intuitive interface based on drag and drop gestures
+* quick recognition of pages in source PDFs thanks to the draggable thumbnail previews
 
 ### Releases
 ##### Windows
@@ -49,6 +58,12 @@ INCLUDEPATH += $$MUPDFPATH\include
 ...
 ```
 It's easier, when compiling, to use the Qt Creator tool to make sure all the paths are retrieved correctly.
+
+### Support
+If you find this tool to be useful, please consider showing your support with a small donation. This will help the project grow into a 360° tool for PDF operations
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman)
+
 ### License
 The software is provided under GNU AGPL v3.0. See the LICENSE file for more info.
 
