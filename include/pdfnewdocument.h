@@ -3,9 +3,7 @@
 
 #include <QString>
 #include <QImage>
-#include <QBuffer>
 #include <QDebug>
-#include <QVector>
 #include <QTemporaryFile>
 
 #include "mupdf/pdf.h"

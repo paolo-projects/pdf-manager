@@ -106,66 +106,6 @@ void PdfUtil::PdfNewDocument::addPageFromParent(pdf_document* doc_src, int pageN
     }
 }
 
-// TEMPORARY CLASS
-#define mmin(x, y) ( (x) > (y) ? (y) : (x) )
-class BufferedImageData : public QIODevice
-{
-public:
-    BufferedImageData()
-    {
-
-    }
-    ~BufferedImageData()
-    {
-
-    }
-    bool atEnd() const override { return false; }
-    qint64 bytesAvailable() const override { return bdata.size(); }
-    bool isSequential() const override { return true; }
-    bool putChar(char c) {}
-    bool seek(qint64 pos) override { return false; }
-    qint64 size() const override { return bdata.size(); }
-    qint64 write(const char* data, qint64 maxSize)
-    {
-        auto initsize = bdata.size();
-        bdata.resize(initsize + maxSize);
-        memcpy(&bdata[initsize], data, maxSize);
-        return maxSize;
-    }
-    qint64 write(const char* data)
-    {
-        auto maxsize = qstrlen(data);
-        write(data, maxsize);
-    }
-    qint64 write(const QByteArray& byteArray)
-    {
-        auto maxsize = byteArray.size();
-        write(byteArray.constData(), maxsize);
-    }
-    const unsigned char* constData() const
-    {
-        return bdata.constData();
-    }
-    unsigned char* data()
-    {
-        return bdata.data();
-    }
-    qint64 readData(char *data, qint64 maxlen) override
-    {
-        auto szlen = mmin(maxlen, bdata.size());
-        memcpy(data, bdata.data(), szlen);
-        return szlen;
-    }
-    qint64 writeData(const char *data, qint64 len) override
-    {
-        write(data, len);
-        return len;
-    }
-private:
-    QVector<unsigned char> bdata;
-};
-#undef mmin
-
 void PdfUtil::PdfNewDocument::addPageFromImage(QString image_path)
 {
     if(image_path.length() > 0)
