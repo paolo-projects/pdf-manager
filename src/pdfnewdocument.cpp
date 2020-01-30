@@ -106,16 +106,104 @@ void PdfUtil::PdfNewDocument::addPageFromParent(pdf_document* doc_src, int pageN
     }
 }
 
+// TEMPORARY CLASS
+#define mmin(x, y) ( (x) > (y) ? (y) : (x) )
+class BufferedImageData : public QIODevice
+{
+public:
+    BufferedImageData()
+    {
+
+    }
+    ~BufferedImageData()
+    {
+
+    }
+    bool atEnd() const override { return false; }
+    qint64 bytesAvailable() const override { return bdata.size(); }
+    bool isSequential() const override { return true; }
+    bool putChar(char c) {}
+    bool seek(qint64 pos) override { return false; }
+    qint64 size() const override { return bdata.size(); }
+    qint64 write(const char* data, qint64 maxSize)
+    {
+        auto initsize = bdata.size();
+        bdata.resize(initsize + maxSize);
+        memcpy(&bdata[initsize], data, maxSize);
+        return maxSize;
+    }
+    qint64 write(const char* data)
+    {
+        auto maxsize = qstrlen(data);
+        write(data, maxsize);
+    }
+    qint64 write(const QByteArray& byteArray)
+    {
+        auto maxsize = byteArray.size();
+        write(byteArray.constData(), maxsize);
+    }
+    const unsigned char* constData() const
+    {
+        return bdata.constData();
+    }
+    unsigned char* data()
+    {
+        return bdata.data();
+    }
+    qint64 readData(char *data, qint64 maxlen) override
+    {
+        auto szlen = mmin(maxlen, bdata.size());
+        memcpy(data, bdata.data(), szlen);
+        return szlen;
+    }
+    qint64 writeData(const char *data, qint64 len) override
+    {
+        write(data, len);
+        return len;
+    }
+private:
+    QVector<unsigned char> bdata;
+};
+#undef mmin
+
 void PdfUtil::PdfNewDocument::addPageFromImage(QString image_path)
 {
     if(image_path.length() > 0)
     {
+        fz_image* img = NULL;
+        fz_buffer* nres = NULL;
+        pdf_obj* img_obj = NULL;
+        pdf_obj* page_resx = NULL;
+
         fz_try(ctx)
         {
             const char* pdfpageimg_templ = " q %g %g %g %g %g %g cm /%s Do Q ";
             std::string _imgname = "imgObj" + std::to_string(imgcounter);
 
-            fz_image* img = fz_new_image_from_file(ctx, image_path.toStdString().c_str());
+            // Conversion to JPG needed to ensure the inserted image will be compressed
+            // Otherwise huge PDF files would be created
+            if(QFileInfo(image_path).suffix() != "jpg" && QFileInfo(image_path).suffix() != "jpeg")
+            {
+                qDebug() << "Original image size: " << QFileInfo(image_path).size()/1024 << " KB\n";
+                QImage img_src(image_path);
+                QTemporaryFile imgfile("pdfman-XXXXXX.jpg");
+                if(imgfile.open())
+                {
+                    img_src.save(imgfile.fileName(), "JPG");
+
+                    qDebug() << "JPG image size: " << imgfile.size()/1024 << " KB at " << imgfile.fileName() << "\n";
+
+                    img = fz_new_image_from_file(ctx, imgfile.fileName().toLocal8Bit());
+                }
+                else
+                {
+                    img = fz_new_image_from_file(ctx, image_path.toLocal8Bit());
+                }
+            }
+            else
+            {
+                img = fz_new_image_from_file(ctx, image_path.toLocal8Bit());
+            }
             fz_pixmap* pixm = fz_get_pixmap_from_image(ctx, img, NULL, NULL, 0, 0);
 
             if(pixm->alpha == 1)
@@ -131,10 +219,10 @@ void PdfUtil::PdfNewDocument::addPageFromImage(QString image_path)
                 zimg = NULL;
             }
 
-            pdf_obj* img_obj = pdf_add_image(ctx, doc_des, img);
+            img_obj = pdf_add_image(ctx, doc_des, img);
 
-            pdf_obj* page_resx = pdf_add_object_drop(ctx, doc_des, pdf_new_dict(ctx, doc_des, 1));
-            fz_buffer* nres = fz_new_buffer(ctx, 50);
+            page_resx = pdf_add_object_drop(ctx, doc_des, pdf_new_dict(ctx, doc_des, 1));
+            nres = fz_new_buffer(ctx, 50);
 
             fz_rect mediabox = fz_make_rect(0, 0, img->w, img->h);
 
@@ -192,12 +280,15 @@ void PdfUtil::PdfNewDocument::addPageFromImage(QString image_path)
 
             pdf_insert_page(ctx, doc_des, addedPages, new_page);
 
-            fz_drop_buffer(ctx, nres);
-
-            fz_drop_image(ctx, img);
-
             addedPages++;
             imgcounter++;
+        }
+        fz_always(ctx)
+        {
+            pdf_drop_obj(ctx, page_resx);
+            pdf_drop_obj(ctx, img_obj);
+            fz_drop_buffer(ctx, nres);
+            fz_drop_image(ctx, img);
         }
         fz_catch(ctx)
         {

@@ -249,6 +249,8 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Load_PDF"/>
+    <addaction name="actionAdd_from_image_file"/>
+    <addaction name="separator"/>
     <addaction name="action_Export_PDF"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
@@ -278,6 +280,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Load_PDF"/>
+   <addaction name="actionAdd_from_image_file"/>
+   <addaction name="separator"/>
    <addaction name="action_Export_PDF"/>
    <addaction name="separator"/>
    <addaction name="action_Add_all"/>
@@ -326,8 +330,21 @@
    </property>
   </action>
   <action name="action_About">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/res/icons8_about_96px.png</normaloff>:/icons/res/icons8_about_96px.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAdd_from_image_file">
+   <property name="icon">
+    <iconset resource="../resources.qrc">
+     <normaloff>:/icons/res/icons8_add_image_96px.png</normaloff>:/icons/res/icons8_add_image_96px.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add from &amp;image file</string>
    </property>
   </action>
  </widget>

@@ -80,6 +80,8 @@ private slots:
 
     void newPagesItemDropped();
 
+    void on_actionAdd_from_image_file_triggered();
+
 private:
     Ui::MainWindow *ui;
     QList<PdfUtil*> loadedDocuments;

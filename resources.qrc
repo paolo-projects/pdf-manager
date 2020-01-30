@@ -5,5 +5,8 @@
         <file>res/icons8_export_pdf_96px.png</file>
         <file>res/icons8_opened_folder_96px.png</file>
         <file>res/icons8_pdf_2_96px.png</file>
+        <file>res/icons8_about_96px.png</file>
+        <file>res/icons8_add_image_96px.png</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

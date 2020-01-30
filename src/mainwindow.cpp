@@ -590,3 +590,22 @@ void MainWindow::newPagesItemDropped()
 {
     pdfPagesHint->setVisible(false);
 }
+
+void MainWindow::on_actionAdd_from_image_file_triggered()
+{
+    QStringList imgFiles = QFileDialog::getOpenFileNames(this, tr("Add image file"), "", tr("Image file") + " (*.jpg *.jpeg *.png *.gif *.bmp)");
+    if(!imgFiles.isEmpty())
+    {
+        int rCount = pdfPageRangesListModel->rowCount();
+        pdfPageRangesListModel->insertRows(rCount, imgFiles.size());
+
+        for(int i = 0; i < imgFiles.size(); i++)
+        {
+            const QString& imgF = imgFiles.at(i);
+            auto t_item = pdfPageRangesListModel->index(rCount + i);
+            pdfPageRangesListModel->setData(t_item, QVariant::fromValue<PdfPageRangeSpecificator*>(reinterpret_cast<PdfPageRangeSpecificator*>(new PdfImagePageSpecificator(imgF))));
+        }
+
+        emit pdfPageRangesListModel->itemDropped();
+    }
+}
