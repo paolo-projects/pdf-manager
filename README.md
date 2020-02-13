@@ -21,7 +21,7 @@ You can find **Win64** installers in the *releases* section (and a 32 bit releas
 A **Mac OSX 10.12+** release is provided in the *releases* section.
 
 #### Linux
-On Linux you have to compile the software on your own. Follow the instructions below.
+You can find an experimental x64 AppImage in the releases. It should work simply by `chmod +x` and then running it. Otherwise you have to compile the software on your own. Follow the instructions below.
 
 ### Compile
 To compile the software you need Qt (qmake or qtcreator). A copy of the source code can be found here: [https://github.com/qt/qtbase](https://github.com/qt/qtbase), or you can get an installer for the open-source edition at [https://www.qt.io/download-open-source](https://www.qt.io/download-open-source).
