@@ -1,6 +1,6 @@
 # PDF Manager
 
-![GitHub Releases](https://img.shields.io/github/downloads/paolo-projects/pdf-manager/latest/total?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paolo-projects/pdf-manager?style=flat-square) [![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman) ![GitHub](https://img.shields.io/github/license/paolo-projects/pdf-manager?style=flat-square)
+![GitHub Releases](https://img.shields.io/github/downloads/paolo-projects/pdf-manager/latest/total?style=flat-square) ![GitHub issues](https://img.shields.io/github/issues/paolo-projects/pdf-manager?style=flat-square) ![GitHub](https://img.shields.io/github/license/paolo-projects/pdf-manager?style=flat-square)
 
  <img src="/showcase/mainscreen_ubuntu.png" width=350/> <img src="/showcase/mainscreen_win.png" width=350 />
 
@@ -60,11 +60,6 @@ INCLUDEPATH += $$MUPDFPATH\include
 ...
 ```
 It's easier, when compiling, to use the Qt Creator tool to make sure all the paths are retrieved correctly.
-
-### Support
-If you find this tool to be useful, please consider showing your support with a small donation. This will help the project grow into a 360° tool for PDF operations
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green?style=flat-square)](https://paypal.me/instruman)
 
 ### License
 The software is provided under GNU AGPL v3.0. See the LICENSE file for more info.
